@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+  <TypePattern DisplayName="Unity Basic" Priority="100">
+    <Entry DisplayName="Fields">
+      <Entry.Match>
+        <Kind Is="Field" />
+      </Entry.Match>
+    </Entry>
+    <Entry DisplayName="Properties">
+      <Entry.Match>
+        <Kind Is="Property" />
+      </Entry.Match>
+    </Entry>
+    <Entry DisplayName="Constructors">
+      <Entry.Match>
+        <Kind Is="Constructor" />
+      </Entry.Match>
+    </Entry>
+    <Entry DisplayName="Methods">
+      <Entry.Match>
+        <Kind Is="Method" />
+      </Entry.Match>
+      <Entry.SortBy>
+        <Name />
+      </Entry.SortBy>
+    </Entry>
+  </TypePattern>
+</Patterns>

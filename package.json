@@ -1,0 +1,42 @@
+{
+  "name": "rider-layout",
+  "displayName": "Rider Layout for C#",
+  "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
+  "version": "0.1.0",
+  "publisher": "sam",
+  "license": "MIT",
+  "engines": { "vscode": "^1.95.0" },
+  "categories": ["Programming Languages", "Formatters", "Other"],
+  "activationEvents": ["onLanguage:csharp"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
+      { "command": "riderLayout.rearrangeSelection", "title": "Rider Layout: Rearrange Selection" },
+      { "command": "riderLayout.reload", "title": "Rider Layout: Reload Rider Settings" },
+      { "command": "riderLayout.preview", "title": "Rider Layout: Explain Active Layout" }
+    ],
+    "configuration": {
+      "title": "Rider Layout",
+      "properties": {
+        "riderLayout.enabled": { "type": "boolean", "default": true },
+        "riderLayout.autoDetect": { "type": "boolean", "default": true },
+        "riderLayout.formatOnSave": { "type": "boolean", "default": false },
+        "riderLayout.cliPath": { "type": "string", "default": "" },
+        "riderLayout.settingsPath": { "type": ["string", "null"], "default": null }
+      }
+    }
+  },
+  "scripts": {
+    "compile": "tsc -p ./tsconfig.json && node ./scripts/copy-assets.mjs",
+    "watch": "tsc -w -p ./tsconfig.json",
+    "package": "npm run compile && npx @vscode/vsce package",
+    "test": "node ./scripts/run-tests.mjs"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "@types/vscode": "^1.95.0",
+    "@vscode/vsce": "^3.2.0",
+    "typescript": "^5.7.2"
+  }
+}

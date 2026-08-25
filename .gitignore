@@ -1,0 +1,26 @@
+# Node / VS Code extension
+node_modules/
+dist/
+*.vsix
+.vscode-test/
+.vscode/*.log
+
+# .NET build output
+bin/
+obj/
+TestResults/
+[Bb]in/
+[Oo]bj/
+rider-layout-vscode-publish/
+
+# Published CLI (built by `dotnet publish` before packaging)
+runtime/
+
+# Rider / ReSharper
+.idea/
+*.DotSettings.user
+*.user
+
+# OS
+.DS_Store
+Thumbs.db

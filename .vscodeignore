@@ -1,0 +1,10 @@
+.vscode/**
+src/**
+engine/**
+tests/**
+fixtures/**
+docs/**
+node_modules/**
+*.cs
+*.csproj
+*.sln
