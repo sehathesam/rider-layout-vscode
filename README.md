@@ -65,10 +65,14 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
-**v0.2.0** — Format on save + global layout:
-- New **Toggle Format on Save** command (default off) — rearranges and saves the file
+**v0.3.0** — Format on save + global layout:
+- New **Toggle Format on Save** command (default off) — rearranges before every save
 - Layout file is stored globally — set it **once**, used in every project
 - Better feedback & no-workspace support
+
+**v0.2.0** — Clearer auto-apply errors:
+- Auto-apply shows a clear warning with a "Select Layout File" action instead of silently doing nothing
+- Works with single files (no workspace folder required)
 
 **v0.1.0** — MVP scratchpad:
 - Load a Rider layout file & auto-apply on focus
