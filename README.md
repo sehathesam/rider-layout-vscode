@@ -64,6 +64,11 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.2.0** — Better feedback & no-workspace support:
+- Auto-apply now shows a clear warning with a "Select Layout File" action instead of silently doing nothing
+- Works with single files (no workspace folder required) — layout is looked up from the file's own folder
+- Fixed a crash/endless condition on publish
+
 **v0.1.0** — MVP scratchpad:
 - Load a Rider layout file & auto-apply on focus
 - Regions, priorities, `Order` sorting, full member-kind set

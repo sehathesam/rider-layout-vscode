@@ -24,11 +24,11 @@ export class RiderSettingsService {
     }
   }
 
-  async findLayoutXml(folder: vscode.WorkspaceFolder): Promise<string | undefined> {
+  async findLayoutXml(rootDir: string): Promise<string | undefined> {
     const configured = vscode.workspace.getConfiguration('riderLayout').get<string | null>('settingsPath');
     const candidates = configured
       ? [configured]
-      : await this.findCandidateFiles(folder.uri.fsPath);
+      : await this.findCandidateFiles(rootDir);
 
     for (const file of candidates) {
       try {

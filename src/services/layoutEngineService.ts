@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import * as path from 'node:path';
 import { CliClient, defaultCliPath } from './cliClient';
 import { RiderSettingsService } from './riderSettingsService';
 
@@ -45,11 +46,11 @@ export class LayoutEngineService {
   }
 
   async rearrange(document: vscode.TextDocument): Promise<string> {
-    const folder = vscode.workspace.getWorkspaceFolder(document.uri);
-    if (!folder) throw new Error('Open a C# file inside a workspace so Rider settings can be discovered.');
+    const folder = vscode.workspace.getWorkspaceFolder(document.uri)
+      ?? { uri: vscode.Uri.file(path.dirname(document.uri.fsPath)) };
 
-    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder);
-    if (!layoutXml) throw new Error('Could not find Rider File Layout settings for this workspace.');
+    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder.uri.fsPath);
+    if (!layoutXml) throw new Error('No Rider layout selected or found. Use "Rider Layout: Select Layout File" first.');
     this.cachedLayout = layoutXml;
 
     const response = await this.getClient().request({
@@ -64,10 +65,10 @@ export class LayoutEngineService {
   }
 
   async preview(document: vscode.TextDocument): Promise<string> {
-    const folder = vscode.workspace.getWorkspaceFolder(document.uri);
-    if (!folder) throw new Error('Open a C# file inside a workspace.');
-    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder);
-    if (!layoutXml) throw new Error('No Rider File Layout settings found.');
+    const folder = vscode.workspace.getWorkspaceFolder(document.uri)
+      ?? { uri: vscode.Uri.file(path.dirname(document.uri.fsPath)) };
+    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder.uri.fsPath);
+    if (!layoutXml) throw new Error('No Rider layout selected or found.');
     return layoutXml;
   }
 

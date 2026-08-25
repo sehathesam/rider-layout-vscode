@@ -3,7 +3,9 @@ import { LayoutEngineService } from '../services/layoutEngineService';
 
 export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Disposable {
   const applied = new WeakSet<vscode.TextDocument>();
+  const warned = new WeakSet<vscode.TextDocument>();
   let inFlight = false;
+  let lastErrorShownAt = 0;
 
   async function applyIfNeeded(editor?: vscode.TextEditor): Promise<void> {
     if (!editor || editor.document.languageId !== 'csharp') return;
@@ -28,16 +30,28 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
         });
       }
       applied.add(editor.document);
-    } catch {
-      // Layout not configured or engine error: stay quiet and retry on the next
-      // focus so it applies once a layout file has been selected.
+    } catch (error) {
+      // Only nag once per document so we do not bother the user on every focus
+      // switch, but still make the failure visible instead of silently failing.
+      if (!warned.has(editor.document)) {
+        warned.add(editor.document);
+        const now = Date.now();
+        if (now - lastErrorShownAt > 30_000) {
+          lastErrorShownAt = now;
+          const message = `Rider Layout: ${error instanceof Error ? error.message : String(error)}`;
+          void vscode.window.showWarningMessage(message, 'Select Layout File').then(action => {
+            if (action === 'Select Layout File') {
+              void vscode.commands.executeCommand('riderLayout.pickLayoutFile');
+            }
+          });
+        }
+      }
     } finally {
       inFlight = false;
     }
   }
 
   const onFocus = vscode.window.onDidChangeActiveTextEditor(applyIfNeeded);
-  // Apply to the currently active editor when the extension activates.
   void applyIfNeeded(vscode.window.activeTextEditor);
 
   return onFocus;
