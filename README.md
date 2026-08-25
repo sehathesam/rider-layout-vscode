@@ -1,88 +1,74 @@
-# Rider Layout for C# — VS Code
+# Rider Layout for C#
+**Bring JetBrains Rider's file layout to your C# code — right in VS Code.**
 
-A VS Code extension prototype that consumes JetBrains Rider File/Type Layout XAML and rearranges C# members using a Rider-compatible rule model.
+> The missing piece for C# developers who love Rider's *member arrangement* but work in VS Code. Point it at your Rider layout, and your files organize themselves — no new formatter to learn, no config abuse.
 
-## Current MVP
+---
 
-Implemented:
+## 🎯 What you get
 
-- VS Code extension shell in TypeScript.
-- JSON-lines IPC between the extension and a .NET CLI.
-- Rider `Patterns` XML parsing.
-- `TypePattern`, `Entry`, `Entry.Match`, `Entry.SortBy`.
-- `And`, `Or`, `Not`.
-- `Kind`, `Access`, `Name`.
-- `Static`, `Readonly`, `Abstract`, `Virtual`, `Override`, `Const`.
-- Basic `HasAttribute` matching.
-- Match priority and declaration-order fallback.
-- Basic sorting by `Name`, `Kind`, `Access`, `Static`, `Readonly`, `Const`.
-- Roslyn-based C# member extraction and source rewriting.
-- VS Code commands and Code Action.
-- Initial project/settings discovery for `.DotSettings` and `.idea` XML.
+Rider's **File Layout** is one of its most-loved features: real projects enforce a consistent order for fields, constructors, properties, methods, Unity lifecycle hooks, and more — automatically. This extension reproduces that behavior for VS Code, so your whole team can agree on one arrangement and stop arguing about where things go.
 
-Not yet implemented:
+### File layout, adopted to your rules
+The exact layout you already use in Rider (`.xml` / `.DotSettings`, including Unity-style namespaces) can be loaded *directly*. No migration, no rewriting — the same pattern your team already relies on.
 
-- Full Rider type matcher semantics.
-- File-level pattern application.
-- Regions/groups and `GroupBy` source transformation.
-- All Rider constraints and semantic matchers.
-- Multiple classes/types in a file with independent type-pattern selection.
-- Exact Rider conflict-strength algorithm.
-- `NoReorder` attribute handling.
+### Zero-config daily flow
+Select your layout file **once**, and from then on every `*.cs` file you focus is reordered automatically. No buttons to hunt for, no remembering shortcuts.
 
-## Repository layout
+### Built for real Rider layouts
+- `TypePattern`, `Entry`, regions with **nested priorities**
+- Sort by explicit `Order` (`public → internal → protected → private`), kind, static/readonly/virtual/override
+- Semantic matchers for Unity teams: `[SerializeField]`, lifecycle methods, interface implementations
+- Catch-all rules so nothing is silently dropped
 
-```text
-src/                         VS Code extension
-engine/RiderLayout.Core/     Rider-independent rule engine
-engine/RiderLayout.Rider/    Rider XML/settings compatibility
-engine/RiderLayout.CSharp/   Roslyn parsing and source rewriting
-engine/RiderLayout.Cli/      JSON-lines process boundary
-tests/                       Unit tests
-fixtures/                    Golden test inputs/outputs
-```
+### Identity & diff-friendly
+A span-based rewriter reorders only what belongs in the class body — usings, other types, and surrounding code are untouched, so your diffs stay clean and your `using` block isn't destroyed.
 
-## Build prerequisites
+## ⚡ Get started in 3 steps
 
-- Node.js 20+ recommended.
-- .NET 8 SDK+.
+1. **Install** the extension (or just open the detail page and press **Install**).
+2. **Choose your layout** — `Ctrl+Shift+P` → **Rider Layout: Select Layout File** → pick your `.xml` / `.DotSettings`.
+3. **Open any `.cs` file** — done. It's reordered the moment it gains focus.
 
-The current environment used to create this repository did not have the `dotnet` SDK installed, so the C# solution has been structurally generated but not compiled in this environment.
+Auto-apply is on by default. Flip a switch anytime with **Rider Layout: Toggle Auto-Apply**.
 
-## Build
+## 📚 Try the bundled StyleCop/Unity layout
+The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.xml`) that organizes classes in the order your team loves:
 
-```bash
-npm install
-npm run compile
+`Injected Fields → Constants → Static fields → Fields → Serialized fields → Ctors → Events & Delegates → Properties → Interface implementations → Methods (public → protected → private, with Unity/RPC/none)`
 
-dotnet restore engine/RiderLayout.sln
-dotnet build engine/RiderLayout.sln -c Release
-```
+## 🛣️ Commands
 
-Build the CLI and copy it to the extension runtime directory before packaging:
+| Command | What it does |
+|---|---|
+| **Select Layout File** | Pick a Rider layout `.xml` / `.DotSettings` file |
+| **Toggle Auto-Apply** | On/off automatic reorder when a `*.cs` gains focus |
+| **Rearrange Document** | Apply the layout to the current file now |
+| **Preview Active Layout** | Show the active layout XML |
 
-```bash
-dotnet publish engine/RiderLayout.Cli/RiderLayout.Cli.csproj -c Release -o runtime
-npm run compile
-npx @vscode/vsce package
-```
+## 🔧 Settings
 
-Then configure `riderLayout.cliPath` to the published `RiderLayout.Cli.dll`, or copy it to `runtime/RiderLayout.Cli.dll` inside the extension.
+- `riderLayout.enabled` — master switch (default `true`)
+- `riderLayout.autoApplyOnFocus` — auto-reorder on focus (default `true`); needs `.idea`
+- `riderLayout.autoDetect` — discover layout in `.idea` / `.Settings` in workspace
+- `riderLayout.formatOnSave` — apply on save (default `false`)
+- `riderLayout.settingsPath` — explicit path to your layout file
 
-## Design goal
+## Development
 
-The long-term target is not a new formatter syntax. The target is Rider compatibility:
+Built with:
+- **TypeScript** (VS Code extension + long-lived JSON-lines IPC)
+- **.NET 8 + Roslyn** for C# parsing
+- **xUnit** golden/unit tests validated against real Rider layout XML
 
-```text
-Rider File Layout XAML
-        ↓
-RiderLayout.Rider
-        ↓
-RiderLayout.Core
-        ↓
-Roslyn C# model
-        ↓
-ordered members / source rewrite
-```
+See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
-Rider's current documentation describes file/type layout as pattern-based matching with priorities, sorting, regions/groups, unmatched members, and type patterns. The MVP intentionally implements only a safe subset first.
+## Release notes
+**v0.1.0** — MVP scratchpad:
+- Load a Rider layout file & auto-apply on focus
+- Regions, priorities, `Order` sorting, full member-kind set
+- Semantic Unity matchers & golden tests
+
+---
+
+*Built with ❤️ for teams that love Rider's order but live in VS Code.*

@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import { registerPreviewLayout } from './commands/previewLayout';
 import { registerRearrangeDocument } from './commands/rearrangeDocument';
-import { registerRearrangeSelection } from './commands/rearrangeSelection';
 import { registerReloadLayout } from './commands/reloadLayout';
+import { registerPickLayoutFile } from './commands/pickLayoutFile';
+import { registerToggleEnabled } from './commands/toggleEnabled';
+import { registerAutoApplyLayout } from './commands/autoApplyLayout';
 import { LayoutEngineService } from './services/layoutEngineService';
 import { RiderSettingsService } from './services/riderSettingsService';
 import { createOutputChannel } from './utils/logger';
@@ -17,8 +19,10 @@ export function activate(context: vscode.ExtensionContext): void {
     output,
     { dispose: () => { void engine.dispose(); } },
     registerRearrangeDocument(engine),
-    registerRearrangeSelection(engine),
     registerReloadLayout(engine),
+    registerPickLayoutFile(engine),
+    registerToggleEnabled(),
+    registerAutoApplyLayout(engine),
     registerPreviewLayout(engine),
     vscode.languages.registerCodeActionsProvider(
       { language: 'csharp' },

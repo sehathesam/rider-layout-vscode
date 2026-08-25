@@ -3,28 +3,32 @@
 ## Phase 1 — MVP foundation
 
 - [x] Extension project
-- [x] .NET CLI
-- [x] JSON-lines IPC
-- [x] Rider XML parser
+- [x] .NET CLI (long-lived JSON-lines IPC, id-correlated)
+- [x] Rider XML parser (incl. `unity` namespace, NBSP normalization)
 - [x] Roslyn member model
-- [x] Basic rearrangement
-- [x] Golden fixtures
+- [x] Basic rearrangement (span-based rewrite)
+- [x] Region support + inherited priorities + catch-all entries
+- [x] `SortBy` with explicit `Order` and boolean keys
+- [x] Full member kind set (incl. `Constant`, `Destructor`, `Indexer`, `Operator`)
+- [x] Access defaults (class members private, interface members public)
+- [x] Semantic matchers: `HasAttribute` short-name, `SerializedField`, `EventFunction` (Unity lifecycle), explicit `ImplementsInterface`
+- [x] Golden fixtures (incl. a StyleCop/Unity layout)
+- [x] VS Code: select-layout command, auto-apply on focus, toggle, preview
 
 ## Phase 2 — Rider matching compatibility
 
 - [ ] Constraint-strength calculation
-- [ ] Multiple TypePattern selection
+- [ ] Multiple TypePattern selection per file
 - [ ] FilePattern
-- [ ] Full member kind set
-- [ ] More modifiers
-- [ ] `HasAttribute` normalization
-- [ ] semantic base-type/interface checks
+- [x] `HasAttribute` normalization
+- [ ] semantic base-type/interface checks (beyond explicit specifier)
 - [ ] generic/type-parameter constraints
+- [ ] `HandlesEvent` and event-subscription semantics
 
 ## Phase 3 — Regions and groups
 
-- [ ] Region AST
-- [ ] GroupBy
+- [x] Region AST + priority inheritance
+- [ ] `GroupBy`
 - [ ] `${Name}` expansion
 - [ ] Region removal before layout
 - [ ] Region insertion after layout
@@ -32,8 +36,8 @@
 ## Phase 4 — Unity
 
 - [ ] `unity:SerializableClass`
-- [ ] Unity lifecycle method matcher
-- [ ] Unity attribute aliases
+- [x] Unity lifecycle method matcher (`EventFunction`)
+- [x] Unity attribute aliases (`SerializedField`)
 - [ ] Unity-specific type matching
 
 ## Phase 5 — VS Code integration

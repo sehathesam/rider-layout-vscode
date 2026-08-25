@@ -16,6 +16,29 @@ export class LayoutEngineService {
     this.cachedLayout = undefined;
   }
 
+  async pickLayoutFile(): Promise<string | undefined> {
+    const options: vscode.OpenDialogOptions = {
+      canSelectMany: false,
+      canSelectFolders: false,
+      openLabel: 'Select Rider Layout File',
+      filters: {
+        'Rider / ReSharper layout': ['xml', 'DotSettings', 'dotSettings'],
+        'All files': ['*']
+      }
+    };
+
+    const picked = await vscode.window.showOpenDialog(options);
+    const file = picked?.[0];
+    if (!file) return undefined;
+
+    const xml = await this.settings.loadLayoutFromFile(file.fsPath);
+    if (!xml) throw new Error('The selected file contains no <Patterns> layout block.');
+
+    this.cachedLayout = xml;
+    await vscode.workspace.getConfiguration('riderLayout').update('settingsPath', file.fsPath, vscode.ConfigurationTarget.Workspace);
+    return file.fsPath;
+  }
+
   async dispose(): Promise<void> {
     this.client?.dispose();
     this.client = undefined;

@@ -8,6 +8,22 @@ const PATTERNS_END = '</Patterns>';
 export class RiderSettingsService {
   constructor(private readonly output: vscode.OutputChannel) {}
 
+  async loadLayoutFromFile(filePath: string): Promise<string | undefined> {
+    try {
+      const text = await fs.readFile(filePath, 'utf8');
+      const xml = this.extractPatterns(text);
+      if (xml) {
+        this.output.appendLine(`Loaded Rider layout: ${filePath}`);
+        return xml;
+      }
+      this.output.appendLine(`No <Patterns> block found in ${filePath}`);
+      return undefined;
+    } catch (error) {
+      this.output.appendLine(`Cannot read Rider layout ${filePath}: ${String(error)}`);
+      return undefined;
+    }
+  }
+
   async findLayoutXml(folder: vscode.WorkspaceFolder): Promise<string | undefined> {
     const configured = vscode.workspace.getConfiguration('riderLayout').get<string | null>('settingsPath');
     const candidates = configured

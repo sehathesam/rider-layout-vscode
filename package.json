@@ -6,20 +6,23 @@
   "publisher": "sam",
   "license": "MIT",
   "engines": { "vscode": "^1.95.0" },
+  "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
+      { "command": "riderLayout.pickLayoutFile", "title": "Rider Layout: Select Layout File" },
+      { "command": "riderLayout.toggleEnabled", "title": "Rider Layout: Toggle Auto-Apply" },
       { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
-      { "command": "riderLayout.rearrangeSelection", "title": "Rider Layout: Rearrange Selection" },
-      { "command": "riderLayout.reload", "title": "Rider Layout: Reload Rider Settings" },
-      { "command": "riderLayout.preview", "title": "Rider Layout: Explain Active Layout" }
+      { "command": "riderLayout.reload", "title": "Rider Layout: Reload Settings" },
+      { "command": "riderLayout.preview", "title": "Rider Layout: Preview Active Layout" }
     ],
     "configuration": {
       "title": "Rider Layout",
       "properties": {
         "riderLayout.enabled": { "type": "boolean", "default": true },
+        "riderLayout.autoApplyOnFocus": { "type": "boolean", "default": true, "description": "Automatically apply the active Rider layout whenever a C# file gains focus." },
         "riderLayout.autoDetect": { "type": "boolean", "default": true },
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
         "riderLayout.cliPath": { "type": "string", "default": "" },
