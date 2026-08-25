@@ -3,7 +3,7 @@
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
   "version": "0.1.0",
-  "publisher": "sam",
+  "publisher": "sam1965",
   "license": "MIT",
   "repository": {
     "type": "git",
