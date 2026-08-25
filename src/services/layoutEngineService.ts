@@ -36,7 +36,7 @@ export class LayoutEngineService {
     if (!xml) throw new Error('The selected file contains no <Patterns> layout block.');
 
     this.cachedLayout = xml;
-    await vscode.workspace.getConfiguration('riderLayout').update('settingsPath', file.fsPath, vscode.ConfigurationTarget.Workspace);
+    await vscode.workspace.getConfiguration('riderLayout').update('settingsPath', file.fsPath, vscode.ConfigurationTarget.Global);
     return file.fsPath;
   }
 

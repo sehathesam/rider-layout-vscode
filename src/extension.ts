@@ -4,6 +4,8 @@ import { registerRearrangeDocument } from './commands/rearrangeDocument';
 import { registerReloadLayout } from './commands/reloadLayout';
 import { registerPickLayoutFile } from './commands/pickLayoutFile';
 import { registerToggleEnabled } from './commands/toggleEnabled';
+import { registerToggleFormatOnSave } from './commands/toggleFormatOnSave';
+import { registerFormatOnSave } from './commands/formatOnSave';
 import { registerAutoApplyLayout } from './commands/autoApplyLayout';
 import { LayoutEngineService } from './services/layoutEngineService';
 import { RiderSettingsService } from './services/riderSettingsService';
@@ -22,7 +24,9 @@ export function activate(context: vscode.ExtensionContext): void {
     registerReloadLayout(engine),
     registerPickLayoutFile(engine),
     registerToggleEnabled(),
+    registerToggleFormatOnSave(),
     registerAutoApplyLayout(engine),
+    registerFormatOnSave(engine),
     registerPreviewLayout(engine),
     vscode.languages.registerCodeActionsProvider(
       { language: 'csharp' },

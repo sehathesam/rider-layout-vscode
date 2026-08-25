@@ -12,12 +12,13 @@
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleFormatOnSave"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       { "command": "riderLayout.pickLayoutFile", "title": "Rider Layout: Select Layout File" },
       { "command": "riderLayout.toggleEnabled", "title": "Rider Layout: Toggle Auto-Apply" },
+      { "command": "riderLayout.toggleFormatOnSave", "title": "Rider Layout: Toggle Format on Save" },
       { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
       { "command": "riderLayout.reload", "title": "Rider Layout: Reload Settings" },
       { "command": "riderLayout.preview", "title": "Rider Layout: Preview Active Layout" }

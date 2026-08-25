@@ -43,6 +43,7 @@ The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.
 |---|---|
 | **Select Layout File** | Pick a Rider layout `.xml` / `.DotSettings` file |
 | **Toggle Auto-Apply** | On/off automatic reorder when a `*.cs` gains focus |
+| **Toggle Format on Save** | On/off reorder before every save (default: off) |
 | **Rearrange Document** | Apply the layout to the current file now |
 | **Preview Active Layout** | Show the active layout XML |
 
@@ -64,10 +65,10 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
-**v0.2.0** — Better feedback & no-workspace support:
-- Auto-apply now shows a clear warning with a "Select Layout File" action instead of silently doing nothing
-- Works with single files (no workspace folder required) — layout is looked up from the file's own folder
-- Fixed a crash/endless condition on publish
+**v0.2.0** — Format on save + global layout:
+- New **Toggle Format on Save** command (default off) — rearranges and saves the file
+- Layout file is stored globally — set it **once**, used in every project
+- Better feedback & no-workspace support
 
 **v0.1.0** — MVP scratchpad:
 - Load a Rider layout file & auto-apply on focus
