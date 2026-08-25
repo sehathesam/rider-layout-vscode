@@ -5,6 +5,10 @@
   "version": "0.1.0",
   "publisher": "sam",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sehathesam/rider-layout-vscode.git"
+  },
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
