@@ -65,7 +65,8 @@ on C# files, on `riderLayout.pickLayoutFile`, and `riderLayout.toggleEnabled`.
 | `riderLayout.formatOnSave` | `false` | Apply layout on save. |
 | `riderLayout.cliPath` | `""` | Path to a published `RiderLayout.Cli.dll`. |
 | `riderLayout.settingsPath` | `null` | Explicit path to a layout file. |
-| `riderLayout.regions` | `[]` | Region names to emit as `#region` blocks (match `<Region Name>` in the layout XML). Empty keeps the flat ordering. |
+| `riderLayout.emitRegions` | `true` | Master switch for emitting `#region` blocks. Flipped by the **Toggle Region Blocks** command without changing your region selection. |
+| `riderLayout.regions` | *all enabled* | Which region names are emitted as `#region` blocks (match `<Region Name>` in the layout XML). All enabled by default; deselect to omit specific ones. |
 
 ## Troubleshooting
 

@@ -80,7 +80,9 @@ export class LayoutEngineService {
       ?? { uri: vscode.Uri.file(path.dirname(document.uri.fsPath)) };
 
     const layoutXml = await this.resolveLayout(folder.uri.fsPath);
-    const regions = vscode.workspace.getConfiguration('riderLayout').get<string[]>('regions', []);
+    const config = vscode.workspace.getConfiguration('riderLayout');
+    const emitRegions = config.get<boolean>('emitRegions', true);
+    const regions = emitRegions ? config.get<string[]>('regions', []) : [];
 
     const response = await this.getClient().request({
       command: 'rearrange',

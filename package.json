@@ -12,12 +12,13 @@
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleFormatOnSave"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       { "command": "riderLayout.pickLayoutFile", "title": "Rider Layout: Select Layout File" },
       { "command": "riderLayout.toggleEnabled", "title": "Rider Layout: Toggle Auto-Apply" },
+      { "command": "riderLayout.toggleRegions", "title": "Rider Layout: Toggle Region Blocks" },
       { "command": "riderLayout.toggleFormatOnSave", "title": "Rider Layout: Toggle Format on Save" },
       { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
       { "command": "riderLayout.reload", "title": "Rider Layout: Reload Settings" },
@@ -32,11 +33,32 @@
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
         "riderLayout.cliPath": { "type": "string", "default": "" },
         "riderLayout.settingsPath": { "type": ["string", "null"], "default": null },
+        "riderLayout.emitRegions": {
+          "type": "boolean",
+          "default": true,
+          "description": "Master switch for emitting section region blocks. Toggle with the 'Rider Layout: Toggle Region Blocks' command without losing your region selection."
+        },
         "riderLayout.regions": {
           "type": "array",
           "items": { "type": "string" },
-          "default": [],
-          "description": "Region headers to emit as #region blocks. Leave empty to keep the legacy flat ordering. The names match the <Region Name> values in the layout XML, e.g. [\"DEPENDENCIES\", \"CONSTANTS\", \"SERIALIZED FIELDS\"]."
+          "default": [
+            "DEPENDENCIES",
+            "CONSTANTS",
+            "FIELDS",
+            "SERIALIZED FIELDS",
+            "CTORS",
+            "PUBLIC EVENTS",
+            "PRIVATE EVENTS",
+            "PUBLIC PROPERTIES",
+            "PRIVATE PROPERTIES",
+            "INTERFACE IMPLEMENTATIONS",
+            "PUBLIC METHODS",
+            "PROTECTED METHODS",
+            "PRIVATE METHODS",
+            "UNITY METHODS",
+            "RPC METHODS"
+          ],
+          "description": "Which <Region Name> values from the layout XML to emit as #region blocks. All are enabled by default; deselect entries to omit specific regions from the output."
         }
       }
     }

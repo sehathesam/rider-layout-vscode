@@ -65,10 +65,11 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
-**v0.4.0** — Emit `#region` blocks:
-- New `riderLayout.regions` setting — enable specific regions as `#region` blocks (matches the `<Region Name>` values in your layout XML)
+**v0.4.0** — Region settings, toggle & `#region` emission:
+- New **Toggle Region Blocks** command (`riderLayout.toggleRegions`) switches the whole region feature on/off from the Command Palette
+- New `riderLayout.emitRegions` master switch — flipped by the command without touching your region selection
+- New `riderLayout.regions` setting — which regions become `#region` blocks (matches `<Region Name>` in the layout XML). All enabled by default; deselect to omit specific ones
 - `ArrangeGroups` in the engine preserves region boundaries across consecutive entries, so sibling slots (e.g. static + instance fields) share one `#region`
-- Leave `riderLayout.regions` empty to keep the legacy flat ordering exactly as before
 - Golden test covering region emission against `ideen-layout.xml`
 
 **v0.3.0** — Format on save + global layout:

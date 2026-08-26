@@ -4,6 +4,7 @@ import { registerRearrangeDocument } from './commands/rearrangeDocument';
 import { registerReloadLayout } from './commands/reloadLayout';
 import { registerPickLayoutFile } from './commands/pickLayoutFile';
 import { registerToggleEnabled } from './commands/toggleEnabled';
+import { registerToggleRegions } from './commands/toggleRegions';
 import { registerToggleFormatOnSave } from './commands/toggleFormatOnSave';
 import { registerFormatOnSave } from './commands/formatOnSave';
 import { registerAutoApplyLayout } from './commands/autoApplyLayout';
@@ -24,6 +25,7 @@ export function activate(context: vscode.ExtensionContext): void {
     registerReloadLayout(engine),
     registerPickLayoutFile(engine),
     registerToggleEnabled(),
+    registerToggleRegions(),
     registerToggleFormatOnSave(),
     registerAutoApplyLayout(engine),
     registerFormatOnSave(engine),
