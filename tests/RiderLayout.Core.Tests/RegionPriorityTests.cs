@@ -111,4 +111,53 @@ public class RegionPriorityTests
         var result = new LayoutEngine().Arrange(members, pattern);
         Assert.Equal(["_static", "_instance"], result.Select(x => x.Name));
     }
+
+    [Fact]
+    public void ArrangeGroupsTagsMembersWithTheirRegionName()
+    {
+        var pattern = new TypePattern();
+        var fields = new RegionNode { Name = "FIELDS" };
+        fields.Children.Add(new EntryNode { DisplayName = "Static fields", Match = new KindExpression(MemberKind.Field) });
+        fields.Children.Add(new EntryNode { DisplayName = "Fields", Match = new KindExpression(MemberKind.Field) });
+        var methods = new RegionNode { Name = "METHODS" };
+        methods.Children.Add(new EntryNode { DisplayName = "Methods", Match = new KindExpression(MemberKind.Method) });
+        pattern.Children.Add(fields);
+        pattern.Children.Add(methods);
+
+        var members = new List<CSharpMember>
+        {
+            new() { Kind = MemberKind.Method, Name = "Do", OriginalIndex = 0 },
+            new() { Kind = MemberKind.Field, Name = "_x", OriginalIndex = 1 },
+            new() { Kind = MemberKind.Field, Name = "_y", OriginalIndex = 2 }
+        };
+
+        var groups = new LayoutEngine().ArrangeGroups(members, pattern);
+
+        Assert.Collection(groups,
+            g => { Assert.Equal("FIELDS", g.RegionName); Assert.Equal(["_x", "_y"], g.Members.Select(x => x.Name)); },
+            g => { Assert.Equal("METHODS", g.RegionName); Assert.Equal(["Do"], g.Members.Select(x => x.Name)); });
+    }
+
+    [Fact]
+    public void ArrangeGroupsMergesConsecutiveSlotsInSameRegionIntoOneGroup()
+    {
+        // Two entries in one region must collapse into a single group so the
+        // rewriter can wrap them in one #region block.
+        var pattern = new TypePattern();
+        var fields = new RegionNode { Name = "FIELDS" };
+        fields.Children.Add(new EntryNode { DisplayName = "A", Match = new KindExpression(MemberKind.Field) });
+        fields.Children.Add(new EntryNode { DisplayName = "B", Match = new KindExpression(MemberKind.Method) });
+        pattern.Children.Add(fields);
+
+        var members = new List<CSharpMember>
+        {
+            new() { Kind = MemberKind.Method, Name = "Do", OriginalIndex = 0 },
+            new() { Kind = MemberKind.Field, Name = "_x", OriginalIndex = 1 }
+        };
+
+        var groups = new LayoutEngine().ArrangeGroups(members, pattern);
+        Assert.Single(groups);
+        Assert.Equal("FIELDS", groups[0].RegionName);
+        Assert.Equal(["_x", "Do"], groups[0].Members.Select(x => x.Name));
+    }
 }

@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "publisher": "sam1965",
   "license": "MIT",
   "repository": {
@@ -31,7 +31,13 @@
         "riderLayout.autoDetect": { "type": "boolean", "default": true },
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
         "riderLayout.cliPath": { "type": "string", "default": "" },
-        "riderLayout.settingsPath": { "type": ["string", "null"], "default": null }
+        "riderLayout.settingsPath": { "type": ["string", "null"], "default": null },
+        "riderLayout.regions": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": [],
+          "description": "Region headers to emit as #region blocks. Leave empty to keep the legacy flat ordering. The names match the <Region Name> values in the layout XML, e.g. [\"DEPENDENCIES\", \"CONSTANTS\", \"SERIALIZED FIELDS\"]."
+        }
       }
     }
   },

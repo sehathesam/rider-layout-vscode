@@ -6,11 +6,16 @@ namespace RiderLayout.Core.Engine;
 
 public sealed class LayoutEngine
 {
-    private readonly record struct Slot(EntryNode Entry, int EffectivePriority, int DeclarationIndex);
+    private readonly record struct Slot(EntryNode Entry, int EffectivePriority, int DeclarationIndex, string? RegionName);
 
     private const int CatchAllPriority = int.MinValue;
 
     public IReadOnlyList<CSharpMember> Arrange(
+        IReadOnlyList<CSharpMember> members,
+        TypePattern pattern)
+        => ArrangeGroups(members, pattern).SelectMany(g => g.Members).ToList();
+
+    public IReadOnlyList<ArrangeGroup> ArrangeGroups(
         IReadOnlyList<CSharpMember> members,
         TypePattern pattern)
     {
@@ -32,14 +37,28 @@ public sealed class LayoutEngine
             bucket.Add(member);
         }
 
-        var result = new List<CSharpMember>();
+        // Walk the slots in declaration order, coalescing consecutive slots that
+        // belong to the same source region into a single emission group.
+        var result = new List<ArrangeGroup>();
+        List<CSharpMember>? run = null;
+        string? runRegion = null;
         foreach (var slot in slots)
         {
             if (!buckets.TryGetValue(slot, out var bucket)) continue;
-            result.AddRange(MemberSorter.Sort(bucket, slot.Entry.SortBy));
+
+            var sorted = MemberSorter.Sort(bucket, slot.Entry.SortBy);
+            if (run is null || runRegion != slot.RegionName)
+            {
+                run = [];
+                runRegion = slot.RegionName;
+                result.Add(new ArrangeGroup { RegionName = runRegion, Members = run });
+            }
+            run.AddRange(sorted);
         }
 
-        result.AddRange(unmatched.OrderBy(x => x.OriginalIndex));
+        if (unmatched.Count > 0)
+            result.Add(new ArrangeGroup { RegionName = null, Members = unmatched.OrderBy(x => x.OriginalIndex).ToList() });
+
         return result;
     }
 
@@ -54,7 +73,7 @@ public sealed class LayoutEngine
         var slots = new List<Slot>();
         var index = 0;
 
-        void Walk(IEnumerable<LayoutNode> nodes, int inheritedPriority)
+        void Walk(IEnumerable<LayoutNode> nodes, int inheritedPriority, string? regionName)
         {
             foreach (var node in nodes)
             {
@@ -67,16 +86,16 @@ public sealed class LayoutEngine
                         var priority = entry.Match is null
                             ? CatchAllPriority
                             : inheritedPriority + entry.Priority;
-                        slots.Add(new Slot(entry, priority, index++));
+                        slots.Add(new Slot(entry, priority, index++, regionName));
                         break;
                     case RegionNode region:
-                        Walk(region.Children, inheritedPriority + region.Priority);
+                        Walk(region.Children, inheritedPriority + region.Priority, region.Name);
                         break;
                 }
             }
         }
 
-        Walk(children, 0);
+        Walk(children, 0, null);
         return slots;
     }
 

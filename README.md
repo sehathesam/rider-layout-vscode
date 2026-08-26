@@ -65,6 +65,12 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.4.0** — Emit `#region` blocks:
+- New `riderLayout.regions` setting — enable specific regions as `#region` blocks (matches the `<Region Name>` values in your layout XML)
+- `ArrangeGroups` in the engine preserves region boundaries across consecutive entries, so sibling slots (e.g. static + instance fields) share one `#region`
+- Leave `riderLayout.regions` empty to keep the legacy flat ordering exactly as before
+- Golden test covering region emission against `ideen-layout.xml`
+
 **v0.3.0** — Format on save + global layout:
 - New **Toggle Format on Save** command (default off) — rearranges before every save
 - Layout file is stored globally — set it **once**, used in every project

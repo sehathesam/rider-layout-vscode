@@ -1,5 +1,6 @@
 using System.Text;
 using System.Text.Json;
+using RiderLayout.Core.Model;
 using RiderLayout.CSharp.Source;
 using RiderLayout.Rider.Settings;
 using RiderLayout.Rider.Xml;
@@ -46,7 +47,10 @@ while ((line = Console.ReadLine()) is not null)
                 if (typePattern is null)
                     throw new InvalidOperationException("The Rider layout contains no TypePattern. File-level rearrangement is not implemented in MVP.");
 
-                var output = new CSharpRewriter().Rearrange(request.Source ?? "", typePattern);
+                var output = new CSharpRewriter().Rearrange(
+                    request.Source ?? "",
+                    typePattern,
+                    new RegionOptions { Enabled = new HashSet<string>(request.Regions ?? [], StringComparer.OrdinalIgnoreCase) });
                 Write(Response.Ok(request.Id).WithSource(output));
                 break;
             }
@@ -80,6 +84,7 @@ public sealed record Request
     public string? Source { get; init; }
     public string? LayoutXml { get; init; }
     public string? ProjectRoot { get; init; }
+    public string[]? Regions { get; init; }
 }
 
 public sealed record Response

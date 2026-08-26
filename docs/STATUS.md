@@ -16,7 +16,8 @@ The repository is fully buildable and tested. The .NET solution compiles with `d
 ## Known limitations
 
 - A single `TypePattern` (the highest-priority one) is selected per file; independent per-type selection is not implemented.
-- `GroupBy` / region insertion-removal are not implemented.
+- `GroupBy` is not implemented; `#region` emission is opt-in via the `riderLayout.regions` setting (see `docs/ARCHITECTURE.md`).
+- Region removal (`RemoveRegions`) is not implemented; regions are only inserted for the enabled set and empty regions are skipped.
 - Exact Rider conflict-strength is approximated by region/entry priorities.
 - `HandlesEvent` is not modeled; `ImplementsInterface` is matched syntactically (explicit interface specifier).
 

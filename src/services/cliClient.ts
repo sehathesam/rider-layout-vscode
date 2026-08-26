@@ -7,6 +7,7 @@ export interface RearrangeRequest {
   source?: string;
   layoutXml?: string;
   projectRoot?: string;
+  regions?: string[];
 }
 
 export interface RearrangeResponse {

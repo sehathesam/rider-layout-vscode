@@ -41,3 +41,7 @@ Do not encode Rider XML tags directly inside the rearrangement algorithm. Every 
 ## Source rewriting
 
 `CSharpRewriter` reorders only the spans inside the class body between the opening and closing braces. It extracts the member's indent once, then re-emits each member's body separated by a single blank line. All text outside the class (usings, other types, trailing content) is left untouched, so the change is minimal and diff-friendly.
+
+### Region emission
+
+`LayoutEngine.ArrangeGroups` preserves the source region each member lands in, coalescing consecutive entries that share a region (so sibling slots like static + instance fields collapse into one group). `CSharpRewriter` emits `#region`/`#endregion` wrappers for the region names requested in `RegionOptions.Enabled` (driven by the `riderLayout.regions` VS Code setting). When no regions are enabled the rewriter falls back to the legacy flat, blank-line-separated ordering, keeping the golden fixtures byte-identical.

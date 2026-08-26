@@ -42,4 +42,103 @@ public class RewriterTests
 
         Assert.True(field < property && property < ctor && ctor < methodA && methodA < methodZ);
     }
+
+    [Fact]
+    public void PreservesCommentsAboveMembersWhenReordering()
+    {
+        const string xml = """
+        <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+          <TypePattern DisplayName="Default">
+            <Entry DisplayName="Fields"><Entry.Match><Kind Is="Field" /></Entry.Match></Entry>
+            <Entry DisplayName="Methods"><Entry.Match><Kind Is="Method" /></Entry.Match></Entry>
+          </TypePattern>
+        </Patterns>
+        """;
+
+        const string input = """
+        public class Demo
+        {
+            /// <summary>Zombie docs.</summary>
+            public void Z() { }
+
+            // Plain comment for the field.
+            private int _x;
+        }
+        """;
+
+        var pattern = new RiderLayoutXmlParser().Parse(xml).TypePatterns[0];
+        var output = new CSharpRewriter().Rearrange(input, pattern);
+
+        var method = output.IndexOf("/// <summary>Zombie docs.</summary>", StringComparison.Ordinal);
+        var comment = output.IndexOf("// Plain comment for the field.", StringComparison.Ordinal);
+        var field = output.IndexOf("private int _x", StringComparison.Ordinal);
+        var z = output.IndexOf("public void Z", StringComparison.Ordinal);
+
+        Assert.True(field < z);
+        Assert.True(comment < field);
+        Assert.True(method < z);
+    }
+
+    [Fact]
+    public void PreservesTrailingInlineCommentOnMemberLine()
+    {
+        const string xml = """
+        <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+          <TypePattern DisplayName="Default">
+            <Entry DisplayName="Fields"><Entry.Match><Kind Is="Field" /></Entry.Match></Entry>
+            <Entry DisplayName="Methods"><Entry.Match><Kind Is="Method" /></Entry.Match></Entry>
+          </TypePattern>
+        </Patterns>
+        """;
+
+        const string input = """
+        public class Demo
+        {
+            public void Z() { }
+            private int _x; // keep the count
+        }
+        """;
+
+        var pattern = new RiderLayoutXmlParser().Parse(xml).TypePatterns[0];
+        var output = new CSharpRewriter().Rearrange(input, pattern);
+
+        Assert.Contains("private int _x; // keep the count", output);
+    }
+
+    [Fact]
+    public void PreservesMultilineDocCommentAboveMember()
+    {
+        const string xml = """
+        <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+          <TypePattern DisplayName="Default">
+            <Entry DisplayName="Fields"><Entry.Match><Kind Is="Field" /></Entry.Match></Entry>
+            <Entry DisplayName="Methods"><Entry.Match><Kind Is="Method" /></Entry.Match></Entry>
+          </TypePattern>
+        </Patterns>
+        """;
+
+        const string input = """
+        public class Demo
+        {
+            /// <summary>
+            /// A longer summary that spans
+            /// multiple lines.
+            /// </summary>
+            public void Z() { }
+
+            private int _x;
+        }
+        """;
+
+        var pattern = new RiderLayoutXmlParser().Parse(xml).TypePatterns[0];
+        var output = new CSharpRewriter().Rearrange(input, pattern);
+
+        var method = output.IndexOf("public void Z", StringComparison.Ordinal);
+
+        Assert.Contains("/// <summary>", output);
+        Assert.Contains("/// A longer summary that spans", output);
+        Assert.Contains("/// multiple lines.", output);
+        Assert.Contains("/// </summary>", output);
+        Assert.True(output.IndexOf("/// <summary>", StringComparison.Ordinal) < method);
+    }
 }

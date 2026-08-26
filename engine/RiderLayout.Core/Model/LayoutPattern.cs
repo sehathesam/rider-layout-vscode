@@ -39,3 +39,30 @@ public sealed class SortRule
     public bool Descending { get; init; }
     public IReadOnlyList<string> Order { get; init; } = [];
 }
+
+/// <summary>
+/// A consecutive run of members that share the same source region. When
+/// <see cref="RegionName"/> is null the members are emitted without a
+/// #region tag (matches the legacy flat behavior); when non-null, the rewriter
+/// wraps them in a single #region ... #endregion block.
+/// </summary>
+public sealed class ArrangeGroup
+{
+    public string? RegionName { get; init; }
+    public required IReadOnlyList<CSharpMember> Members { get; init; }
+}
+
+/// <summary>
+/// Controls whether (and which) source #region blocks are emitted. When no
+/// region names are enabled the rewriter falls back to the legacy flat
+/// member ordering with no tags.
+/// </summary>
+public sealed class RegionOptions
+{
+    public IReadOnlySet<string> Enabled { get; init; } = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+    public bool HasEnabled => Enabled.Count > 0;
+
+    public bool IsEnabled(string? regionName)
+        => regionName is not null && Enabled.Contains(regionName);
+}

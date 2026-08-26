@@ -1,4 +1,5 @@
 using RiderLayout.CSharp.Source;
+using RiderLayout.Core.Model;
 using RiderLayout.Rider.Xml;
 using Xunit;
 
@@ -26,5 +27,64 @@ public class IdeenLayoutGoldenTests
         var actual = new CSharpRewriter().Rearrange(input, pattern).Replace("\r\n", "\n").TrimEnd();
 
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void EmitsRequestedRegionsAroundMembers()
+    {
+        var layout = Read("fixtures/rider/ideen-layout.xml");
+        var input = Read("fixtures/csharp/input/Player.cs");
+        var expected = Read("fixtures/csharp/expected/Player.regions.cs").Replace("\r\n", "\n").TrimEnd();
+
+        var pattern = new RiderLayoutXmlParser().Parse(layout).TypePatterns[0];
+        var regions = new RegionOptions
+        {
+            Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
+                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+            }
+        };
+
+        var actual = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();
+
+        Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public void EmitsRegionsEvenWhenOrderIsAlreadyCorrect()
+    {
+        // Start from the region-tagged golden output, then strip the #region /
+        // #endregion directives. The remaining body is still in layout order but
+        // has no tags. Because the order is unchanged the legacy path would have
+        // returned the source verbatim; the region emitter must re-insert them.
+        var full = Read("fixtures/csharp/expected/Player.regions.cs").Replace("\r\n", "\n");
+        var input = StripRegionDirectives(full);
+        var expected = full.TrimEnd();
+
+        var layout = Read("fixtures/rider/ideen-layout.xml");
+        var pattern = new RiderLayoutXmlParser().Parse(layout).TypePatterns[0];
+        var regions = new RegionOptions
+        {
+            Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
+                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+            }
+        };
+
+        var actual = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();
+
+        Assert.Equal(expected, actual);
+    }
+
+    private static string StripRegionDirectives(string source)
+    {
+        var lines = source.Split('\n').Where(l => !l.Contains("#region") && !l.Contains("#endregion"));
+        return string.Join('\n', lines);
     }
 }

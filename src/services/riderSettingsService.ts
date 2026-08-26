@@ -24,25 +24,20 @@ export class RiderSettingsService {
     }
   }
 
-  async findLayoutXml(rootDir: string): Promise<string | undefined> {
+  async resolve(rootDir: string): Promise<{ xml?: string; missingFile?: string }> {
     const configured = vscode.workspace.getConfiguration('riderLayout').get<string | null>('settingsPath');
-    const candidates = configured
-      ? [configured]
-      : await this.findCandidateFiles(rootDir);
-
-    for (const file of candidates) {
-      try {
-        const text = await fs.readFile(file, 'utf8');
-        const xml = this.extractPatterns(text);
-        if (xml) {
-          this.output.appendLine(`Using Rider layout: ${file}`);
-          return xml;
-        }
-      } catch (error) {
-        this.output.appendLine(`Cannot read Rider settings candidate ${file}: ${String(error)}`);
-      }
+    if (configured) {
+      const xml = await this.loadLayoutFromFile(configured);
+      if (xml) return { xml };
+      this.output.appendLine(`Configured Rider layout could not be loaded: ${configured}`);
+      return { missingFile: configured };
     }
-    return undefined;
+
+    for (const file of await this.findCandidateFiles(rootDir)) {
+      const xml = await this.loadLayoutFromFile(file);
+      if (xml) return { xml };
+    }
+    return {};
   }
 
   private async findCandidateFiles(root: string): Promise<string[]> {

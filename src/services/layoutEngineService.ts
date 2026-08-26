@@ -35,9 +35,39 @@ export class LayoutEngineService {
     const xml = await this.settings.loadLayoutFromFile(file.fsPath);
     if (!xml) throw new Error('The selected file contains no <Patterns> layout block.');
 
+    const target = await this.pickScope();
+    if (!target) return undefined;
+
     this.cachedLayout = xml;
-    await vscode.workspace.getConfiguration('riderLayout').update('settingsPath', file.fsPath, vscode.ConfigurationTarget.Global);
+    await vscode.workspace.getConfiguration('riderLayout').update('settingsPath', file.fsPath, target);
+    this.output.appendLine(`Rider layout stored (${target === vscode.ConfigurationTarget.Global ? 'global' : 'workspace'}): ${file.fsPath}`);
     return file.fsPath;
+  }
+
+  private async pickScope(): Promise<vscode.ConfigurationTarget | undefined> {
+    interface ScopePick extends vscode.QuickPickItem {
+      id: 'global' | 'workspace';
+    }
+    const items: ScopePick[] = [
+      {
+        id: 'global',
+        label: 'Global (all projects)',
+        description: 'Use this layout for every workspace on this machine',
+        picked: true
+      },
+      {
+        id: 'workspace',
+        label: 'Workspace only',
+        description: 'Use this layout only for the current workspace'
+      }
+    ];
+    const picked = await vscode.window.showQuickPick(items, {
+      placeHolder: 'Where should this layout be stored?'
+    });
+    if (!picked) return undefined;
+    return picked.id === 'global'
+      ? vscode.ConfigurationTarget.Global
+      : vscode.ConfigurationTarget.Workspace;
   }
 
   async dispose(): Promise<void> {
@@ -49,15 +79,15 @@ export class LayoutEngineService {
     const folder = vscode.workspace.getWorkspaceFolder(document.uri)
       ?? { uri: vscode.Uri.file(path.dirname(document.uri.fsPath)) };
 
-    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder.uri.fsPath);
-    if (!layoutXml) throw new Error('No Rider layout selected or found. Use "Rider Layout: Select Layout File" first.');
-    this.cachedLayout = layoutXml;
+    const layoutXml = await this.resolveLayout(folder.uri.fsPath);
+    const regions = vscode.workspace.getConfiguration('riderLayout').get<string[]>('regions', []);
 
     const response = await this.getClient().request({
       command: 'rearrange',
       source: document.getText(),
       layoutXml,
-      projectRoot: folder.uri.fsPath
+      projectRoot: folder.uri.fsPath,
+      regions
     });
 
     if (!response.success) throw new Error(response.error ?? 'Rider Layout engine failed.');
@@ -67,9 +97,17 @@ export class LayoutEngineService {
   async preview(document: vscode.TextDocument): Promise<string> {
     const folder = vscode.workspace.getWorkspaceFolder(document.uri)
       ?? { uri: vscode.Uri.file(path.dirname(document.uri.fsPath)) };
-    const layoutXml = this.cachedLayout ?? await this.settings.findLayoutXml(folder.uri.fsPath);
-    if (!layoutXml) throw new Error('No Rider layout selected or found.');
-    return layoutXml;
+    return this.resolveLayout(folder.uri.fsPath);
+  }
+
+  private async resolveLayout(projectRoot: string): Promise<string> {
+    if (!this.cachedLayout) {
+      const { xml, missingFile } = await this.settings.resolve(projectRoot);
+      if (missingFile) throw new Error(`Rider layout file is missing or invalid: ${missingFile}`);
+      if (!xml) throw new Error('No Rider layout is configured. Use "Rider Layout: Select Layout File" first.');
+      this.cachedLayout = xml;
+    }
+    return this.cachedLayout;
   }
 
   private getClient(): CliClient {

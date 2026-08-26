@@ -3,9 +3,8 @@ import { LayoutEngineService } from '../services/layoutEngineService';
 
 export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Disposable {
   const applied = new WeakSet<vscode.TextDocument>();
-  const warned = new WeakSet<vscode.TextDocument>();
   let inFlight = false;
-  let lastErrorShownAt = 0;
+  let lastPromptShownAt = 0;
 
   async function applyIfNeeded(editor?: vscode.TextEditor): Promise<void> {
     if (!editor || editor.document.languageId !== 'csharp') return;
@@ -31,20 +30,15 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
       }
       applied.add(editor.document);
     } catch (error) {
-      // Only nag once per document so we do not bother the user on every focus
-      // switch, but still make the failure visible instead of silently failing.
-      if (!warned.has(editor.document)) {
-        warned.add(editor.document);
-        const now = Date.now();
-        if (now - lastErrorShownAt > 30_000) {
-          lastErrorShownAt = now;
-          const message = `Rider Layout: ${error instanceof Error ? error.message : String(error)}`;
-          void vscode.window.showWarningMessage(message, 'Select Layout File').then(action => {
-            if (action === 'Select Layout File') {
-              void vscode.commands.executeCommand('riderLayout.pickLayoutFile');
-            }
-          });
-        }
+      const now = Date.now();
+      if (now - lastPromptShownAt > 60_000) {
+        lastPromptShownAt = now;
+        const message = `Rider Layout: ${error instanceof Error ? error.message : String(error)}`;
+        void vscode.window.showWarningMessage(message, 'Select Layout File').then(action => {
+          if (action === 'Select Layout File') {
+            void vscode.commands.executeCommand('riderLayout.pickLayoutFile');
+          }
+        });
       }
     } finally {
       inFlight = false;
