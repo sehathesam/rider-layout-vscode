@@ -6,7 +6,10 @@ const PATTERNS_START = '<Patterns';
 const PATTERNS_END = '</Patterns>';
 
 export class RiderSettingsService {
-  constructor(private readonly output: vscode.OutputChannel) {}
+  constructor(
+    private readonly output: vscode.OutputChannel,
+    private readonly defaultLayoutPath: string
+  ) {}
 
   async loadLayoutFromFile(filePath: string): Promise<string | undefined> {
     try {
@@ -24,20 +27,27 @@ export class RiderSettingsService {
     }
   }
 
-  async resolve(rootDir: string): Promise<{ xml?: string; missingFile?: string }> {
+  async resolve(rootDir: string): Promise<{ xml?: string; missingFile?: string; source: string }> {
     const configured = vscode.workspace.getConfiguration('riderLayout').get<string | null>('settingsPath');
     if (configured) {
       const xml = await this.loadLayoutFromFile(configured);
-      if (xml) return { xml };
+      if (xml) return { xml, source: configured };
       this.output.appendLine(`Configured Rider layout could not be loaded: ${configured}`);
-      return { missingFile: configured };
+      return { missingFile: configured, source: configured };
     }
 
     for (const file of await this.findCandidateFiles(rootDir)) {
       const xml = await this.loadLayoutFromFile(file);
-      if (xml) return { xml };
+      if (xml) return { xml, source: file };
     }
-    return {};
+
+    const defaults = await this.loadLayoutFromFile(this.defaultLayoutPath);
+    if (defaults) {
+      this.output.appendLine(`Using bundled default layout: ${this.defaultLayoutPath}`);
+      return { xml: defaults, source: this.defaultLayoutPath };
+    }
+    this.output.appendLine('No layout configured and bundled default is unavailable.');
+    return { source: 'none' };
   }
 
   private async findCandidateFiles(root: string): Promise<string[]> {

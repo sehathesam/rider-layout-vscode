@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.4.0",
+  "version": "0.5.4",
   "publisher": "sam1965",
   "license": "MIT",
   "repository": {
@@ -12,11 +12,12 @@
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.resetLayout", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
       { "command": "riderLayout.pickLayoutFile", "title": "Rider Layout: Select Layout File" },
+      { "command": "riderLayout.resetLayout", "title": "Rider Layout: Reset to Default Layout" },
       { "command": "riderLayout.toggleEnabled", "title": "Rider Layout: Toggle Auto-Apply" },
       { "command": "riderLayout.toggleRegions", "title": "Rider Layout: Toggle Region Blocks" },
       { "command": "riderLayout.toggleFormatOnSave", "title": "Rider Layout: Toggle Format on Save" },
@@ -33,7 +34,11 @@
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
         "riderLayout.formatAfterRearrange": { "type": "boolean", "default": true, "description": "Format the document (Shift+Alt+F) after the layout is applied." },
         "riderLayout.cliPath": { "type": "string", "default": "" },
-        "riderLayout.settingsPath": { "type": ["string", "null"], "default": null },
+        "riderLayout.settingsPath": {
+          "type": ["string", "null"],
+          "default": null,
+          "markdownDescription": "Path to the Rider/ReSharper layout file (`.xml` or `.DotSettings`). Leave empty to use the bundled **ideen-layout.xml** default. Open the file browser to store a custom path (saved globally): [Select Layout File…](command:riderLayout.pickLayoutFile). Go back to the bundled default: [Reset to Default](command:riderLayout.resetLayout). You can also type/paste a path directly here."
+        },
         "riderLayout.emitRegions": {
           "type": "boolean",
           "default": true,
@@ -67,7 +72,7 @@
   "scripts": {
     "compile": "tsc -p ./tsconfig.json && node ./scripts/copy-assets.mjs",
     "watch": "tsc -w -p ./tsconfig.json",
-    "package": "npm run compile && npx @vscode/vsce package",
+    "package": "npm run compile && node ./scripts/package.mjs",
     "test": "node ./scripts/run-tests.mjs"
   },
   "devDependencies": {

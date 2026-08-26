@@ -11,6 +11,8 @@ public sealed class CSharpMember
     public bool IsVirtual { get; init; }
     public bool IsOverride { get; init; }
     public bool IsConst { get; init; }
+    public bool IsAssignedInConstructor { get; init; }
+    public bool IsImplicitInterfaceImplementation { get; init; }
     public IReadOnlyList<string> Attributes { get; init; } = [];
     public bool IsExplicitInterfaceImplementation { get; init; }
     public int OriginalIndex { get; init; }

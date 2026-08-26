@@ -127,5 +127,6 @@ public sealed class UnityEventFunctionExpression : MatchExpression
 
 public sealed class ExplicitInterfaceExpression : MatchExpression
 {
-    public override bool Evaluate(MatchContext context) => context.Member.IsExplicitInterfaceImplementation;
+    public override bool Evaluate(MatchContext context) =>
+        context.Member.IsExplicitInterfaceImplementation || context.Member.IsImplicitInterfaceImplementation;
 }

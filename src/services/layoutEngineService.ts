@@ -17,6 +17,21 @@ export class LayoutEngineService {
     this.cachedLayout = undefined;
   }
 
+  async resetToDefault(): Promise<string | undefined> {
+    const config = vscode.workspace.getConfiguration('riderLayout');
+    await config.update('settingsPath', null, vscode.ConfigurationTarget.Global);
+    await config.update('settingsPath', null, vscode.ConfigurationTarget.Workspace);
+    await this.reload();
+    const folder = vscode.workspace.workspaceFolders?.[0]?.uri
+      ?? vscode.Uri.file(path.dirname(vscode.window.activeTextEditor?.document.uri.fsPath ?? process.cwd()));
+    const { xml, source } = await this.settings.resolve(folder.fsPath);
+    if (xml) {
+      this.cachedLayout = xml;
+      return source;
+    }
+    return undefined;
+  }
+
   async pickLayoutFile(): Promise<string | undefined> {
     const options: vscode.OpenDialogOptions = {
       canSelectMany: false,

@@ -53,7 +53,7 @@ The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.
 - `riderLayout.autoApplyOnFocus` — auto-reorder on focus (default `true`); needs `.idea`
 - `riderLayout.autoDetect` — discover layout in `.idea` / `.Settings` in workspace
 - `riderLayout.formatOnSave` — apply on save (default `false`)
-- `riderLayout.settingsPath` — explicit path to your layout file
+- `riderLayout.settingsPath` — explicit path to your layout file (leave empty for the bundled default)
 
 ## Development
 
@@ -65,6 +65,34 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.4** — No more false "Select Layout File" prompts:
+- Files with no class (lone interface, enum, using-only) are a silent no-op instead of raising "No class declaration found"
+- Removed the obsolete "Select Layout File" action from the auto-apply warning — a default layout is always bundled, so no prompt is needed
+- A pattern with its own `<Match>` that doesn't apply to the class now leaves the file untouched (fail-closed)
+
+**v0.5.3** — Interfaces in other files/namespaces:
+- `INTERFACE IMPLEMENTATIONS` now resolves interfaces defined anywhere in the project (other namespaces/files), not just the current file, BCL-only, or explicit implementations
+- The rewriter compiles the project's `.cs` sources as references, so a class implementing e.g. `Homa.Logic.IReply` with an implicit `public virtual void Init(...)` is placed in the region
+- Model is cached per project root for speed
+
+**v0.5.2** — Interface implementations detected implicitly:
+- `INTERFACE IMPLEMENTATIONS` now also catches **implicit** interface members (e.g. `public void Dispose()` when the class implements `IDisposable`), not just `void IDisposable.Dispose()`
+- Detection is semantic via a Roslyn model, so BCL interfaces (`IDisposable`, `IEnumerable`, …) and interfaces defined in the same file are both resolved; plain public methods that don't implement anything are left in their own region
+- Works in any layout that uses `<ImplementsInterface/>`
+
+**v0.5.1** — Constructor-assigned fields go to Dependencies:
+- Fields assigned anywhere in an instance constructor now automatically route into a region named **DEPENDENCIES**, in any layout that has one — no XML change needed
+- Detects both `this._field = …` and plain `_field = …`, ignoring constructor parameters and locals
+- Instance (non-static) fields only; a fresh install or existing layout picks this up automatically
+
+**v0.5.0** — Bundled default layout:
+- Ships with the **ideen-layout.xml** (StyleCop Unity Classes) built in — if you haven't set a custom layout it's used automatically, so it works out of the box after install
+- Custom layout still available via **Select Layout File** (or set `riderLayout.settingsPath`)
+- New **Rider Layout: Reset to Default Layout** command (and a link in the Settings UI) clears your custom path and switches back to the bundled default
+
+**v0.4.1** — Clickable file browser in Settings:
+- `riderLayout.settingsPath` now shows a **"Select Layout File…"** button in the Settings UI that opens the file browser and stores the chosen layout globally — no need to switch to the Command Palette
+
 **v0.4.0** — Region settings, toggle & `#region` emission:
 - New **Toggle Region Blocks** command (`riderLayout.toggleRegions`) switches the whole region feature on/off from the Command Palette
 - New `riderLayout.emitRegions` master switch — flipped by the command without touching your region selection

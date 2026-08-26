@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using RiderLayout.Core.Engine;
+using RiderLayout.Core.Matching;
 using RiderLayout.Core.Model;
 using RiderLayout.CSharp.Parsing;
 
@@ -11,10 +12,28 @@ public sealed class CSharpRewriter
     private readonly CSharpDocumentParser _parser = new();
     private readonly LayoutEngine _engine = new();
 
-    public string Rearrange(string source, TypePattern pattern, RegionOptions? regions = null)
+    public string Rearrange(string source, TypePattern pattern, RegionOptions? regions = null, string? projectRoot = null)
     {
         regions ??= new RegionOptions();
-        var parsed = _parser.ParseFirstClass(source);
+
+        // A file with no class declaration (e.g. a lone interface, an enum, a
+        // global using-only file) has nothing to rearrange. This is normal, not
+        // an error, so return it unchanged rather than surfacing a warning.
+        // TypePattern.Match is also respected: if the pattern intentionally does
+        // not apply to the class, leave the file untouched.
+        ParsedClass parsed;
+        try
+        {
+            parsed = _parser.ParseFirstClass(source, projectRoot);
+        }
+        catch (InvalidOperationException)
+        {
+            return source;
+        }
+
+        if (!Applies(pattern, parsed.Declaration))
+            return source;
+
         var groups = _engine.ArrangeGroups(parsed.Members, pattern);
         var ordered = groups.SelectMany(g => g.Members).ToList();
         if (!regions.HasEnabled &&
@@ -120,5 +139,25 @@ public sealed class CSharpRewriter
         var trimmed = line.Trim();
         return trimmed.StartsWith("#region", StringComparison.OrdinalIgnoreCase)
             || trimmed.StartsWith("#endregion", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// True when the pattern's own matcher accepts the given type. A pattern
+    /// with no Match applies to anything; a matching type whose Match fails
+    /// leaves the file untouched (fail-closed).
+    /// </summary>
+    private static bool Applies(TypePattern pattern, ClassDeclarationSyntax declaration)
+    {
+        if (pattern.Match is null) return true;
+        var rough = new CSharpMember
+        {
+            Kind = MemberKind.Class,
+            Name = declaration.Identifier.Text,
+            Access = RiderLayout.Core.Model.Accessibility.Public,
+            OriginalIndex = 0,
+            Start = declaration.SpanStart,
+            Length = declaration.Span.Length
+        };
+        return pattern.Match.Evaluate(new MatchContext(rough));
     }
 }

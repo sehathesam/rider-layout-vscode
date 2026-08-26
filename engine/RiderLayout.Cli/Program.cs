@@ -50,7 +50,8 @@ while ((line = Console.ReadLine()) is not null)
                 var output = new CSharpRewriter().Rearrange(
                     request.Source ?? "",
                     typePattern,
-                    new RegionOptions { Enabled = new HashSet<string>(request.Regions ?? [], StringComparer.OrdinalIgnoreCase) });
+                    new RegionOptions { Enabled = new HashSet<string>(request.Regions ?? [], StringComparer.OrdinalIgnoreCase) },
+                    request.ProjectRoot);
                 Write(Response.Ok(request.Id).WithSource(output));
                 break;
             }

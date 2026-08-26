@@ -4,7 +4,6 @@ import { LayoutEngineService } from '../services/layoutEngineService';
 export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Disposable {
   const applied = new WeakSet<vscode.TextDocument>();
   let inFlight = false;
-  let lastPromptShownAt = 0;
 
   async function applyIfNeeded(editor?: vscode.TextEditor): Promise<void> {
     if (!editor || editor.document.languageId !== 'csharp') return;
@@ -31,16 +30,12 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
       await engine.formatDocument(editor.document);
       applied.add(editor.document);
     } catch (error) {
-      const now = Date.now();
-      if (now - lastPromptShownAt > 60_000) {
-        lastPromptShownAt = now;
-        const message = `Rider Layout: ${error instanceof Error ? error.message : String(error)}`;
-        void vscode.window.showWarningMessage(message, 'Select Layout File').then(action => {
-          if (action === 'Select Layout File') {
-            void vscode.commands.executeCommand('riderLayout.pickLayoutFile');
-          }
-        });
-      }
+      // A default layout is always bundled, so a failure here is an engine
+      // problem worth surfacing, but "Select Layout File" is obsolete. Files
+      // without a class are handled as a silent no-op in the CLI, so they do
+      // not reach this branch.
+      const message = `Rider Layout: ${error instanceof Error ? error.message : String(error)}`;
+      void vscode.window.showWarningMessage(message);
     } finally {
       inFlight = false;
     }

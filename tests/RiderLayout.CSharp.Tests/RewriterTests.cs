@@ -1,4 +1,5 @@
 using RiderLayout.CSharp.Source;
+using RiderLayout.Core.Model;
 using RiderLayout.Rider.Xml;
 using Xunit;
 
@@ -140,5 +141,42 @@ public class RewriterTests
         Assert.Contains("/// multiple lines.", output);
         Assert.Contains("/// </summary>", output);
         Assert.True(output.IndexOf("/// <summary>", StringComparison.Ordinal) < method);
+    }
+
+    [Fact]
+    public void FileWithoutClassReturnsUnchanged()
+    {
+        const string source = """
+        namespace App
+        {
+            public interface IReply
+            {
+                void Init();
+            }
+        }
+        """;
+
+        const string layoutXml = """
+        <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+            <TypePattern DisplayName="X" Priority="1">
+                <Region Name="CTORS">
+                    <Entry DisplayName="Ctor">
+                        <Entry.Match>
+                            <Kind Is="Constructor" />
+                        </Entry.Match>
+                    </Entry>
+                </Region>
+            </TypePattern>
+        </Patterns>
+        """;
+
+        var pattern = new RiderLayoutXmlParser().Parse(layoutXml).TypePatterns[0];
+        var regions = new RegionOptions
+        {
+            Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { "CTORS" }
+        };
+
+        var output = new CSharpRewriter().Rearrange(source, pattern, regions);
+        Assert.Equal(source, output);
     }
 }

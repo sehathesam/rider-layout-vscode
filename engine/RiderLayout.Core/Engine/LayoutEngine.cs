@@ -6,9 +6,10 @@ namespace RiderLayout.Core.Engine;
 
 public sealed class LayoutEngine
 {
-    private readonly record struct Slot(EntryNode Entry, int EffectivePriority, int DeclarationIndex, string? RegionName);
+    private readonly record struct Slot(EntryNode Entry, int EffectivePriority, int DeclarationIndex, string? RegionName, bool IsDependencyRegion);
 
     private const int CatchAllPriority = int.MinValue;
+    private const string DependencyRegionName = "DEPENDENCIES";
 
     public IReadOnlyList<CSharpMember> Arrange(
         IReadOnlyList<CSharpMember> members,
@@ -86,7 +87,8 @@ public sealed class LayoutEngine
                         var priority = entry.Match is null
                             ? CatchAllPriority
                             : inheritedPriority + entry.Priority;
-                        slots.Add(new Slot(entry, priority, index++, regionName));
+                        slots.Add(new Slot(entry, priority, index++, regionName,
+                            regionName is not null && regionName.Equals(DependencyRegionName, StringComparison.OrdinalIgnoreCase)));
                         break;
                     case RegionNode region:
                         Walk(region.Children, inheritedPriority + region.Priority, region.Name);
@@ -99,17 +101,42 @@ public sealed class LayoutEngine
         return slots;
     }
 
+    /// <summary>
+    /// Returns true when a member qualifies for a slot. In addition to the slot's
+    /// declared matcher, an instance field assigned in a constructor is eligible
+    /// for any slot inside a region named DEPENDENCIES (regardless of layout):
+    /// dependency-injected fields are conventionally assigned in the ctor.
+    /// </summary>
+    private static bool IsQualified(Slot slot, CSharpMember member)
+    {
+        if (slot.Entry.Match is null) return true;
+        if (slot.Entry.Match.Evaluate(new MatchContext(member))) return true;
+        return slot.IsDependencyRegion
+            && member.Kind == MemberKind.Field
+            && !member.IsStatic
+            && member.IsAssignedInConstructor;
+    }
+
     private static Slot? PickSlot(CSharpMember member, IReadOnlyList<Slot> slots)
     {
         Slot? best = null;
         foreach (var slot in slots)
         {
-            if (slot.Entry.Match is not null && !slot.Entry.Match.Evaluate(new MatchContext(member)))
-                continue;
+            if (!IsQualified(slot, member)) continue;
+
+            // A field that only qualified through the implicit constructor rule
+            // should beat generic field slots so it lands in DEPENDENCIES.
+            var onlyViaConstructorRule = slot.IsDependencyRegion
+                && member.Kind == MemberKind.Field
+                && !member.IsStatic
+                && member.IsAssignedInConstructor
+                && slot.Entry.Match is not null
+                && !slot.Entry.Match.Evaluate(new MatchContext(member));
+            var effectivePriority = onlyViaConstructorRule ? slot.EffectivePriority + 1 : slot.EffectivePriority;
 
             if (best is null ||
-                slot.EffectivePriority > best.Value.EffectivePriority ||
-                (slot.EffectivePriority == best.Value.EffectivePriority &&
+                effectivePriority > best.Value.EffectivePriority ||
+                (effectivePriority == best.Value.EffectivePriority &&
                  slot.DeclarationIndex < best.Value.DeclarationIndex))
             {
                 best = slot;
