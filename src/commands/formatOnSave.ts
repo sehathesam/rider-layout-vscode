@@ -21,6 +21,7 @@ export function registerFormatOnSave(engine: LayoutEngineService): vscode.Dispos
         const edit = new vscode.WorkspaceEdit();
         edit.replace(event.document.uri, fullRange, output);
         await vscode.workspace.applyEdit(edit);
+        await engine.formatDocument(event.document);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         void vscode.window.showWarningMessage(`Rider Layout: ${message}`);

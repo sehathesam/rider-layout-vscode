@@ -31,6 +31,7 @@
         "riderLayout.autoApplyOnFocus": { "type": "boolean", "default": true, "description": "Automatically apply the active Rider layout whenever a C# file gains focus." },
         "riderLayout.autoDetect": { "type": "boolean", "default": true },
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
+        "riderLayout.formatAfterRearrange": { "type": "boolean", "default": true, "description": "Format the document (Shift+Alt+F) after the layout is applied." },
         "riderLayout.cliPath": { "type": "string", "default": "" },
         "riderLayout.settingsPath": { "type": ["string", "null"], "default": null },
         "riderLayout.emitRegions": {

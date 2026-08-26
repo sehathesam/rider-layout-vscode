@@ -28,6 +28,7 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
           undoStopAfter: false
         });
       }
+      await engine.formatDocument(editor.document);
       applied.add(editor.document);
     } catch (error) {
       const now = Date.now();

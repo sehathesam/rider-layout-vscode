@@ -14,6 +14,7 @@ export function registerRearrangeDocument(engine: LayoutEngineService): vscode.D
       }
       const fullRange = new vscode.Range(editor.document.positionAt(0), editor.document.positionAt(editor.document.getText().length));
       await editor.edit(edit => edit.replace(fullRange, output), { undoStopBefore: true, undoStopAfter: true });
+      await engine.formatDocument(editor.document);
     } catch (error) {
       void vscode.window.showErrorMessage(`Rider Layout: ${String(error)}`);
     }

@@ -96,15 +96,29 @@ public sealed class CSharpRewriter
     private static string RenderMember(string source, MemberDeclarationSyntax member, string indent)
     {
         var leading = source.AsSpan(member.FullSpan.Start, member.SpanStart - member.FullSpan.Start).ToString();
-        var lines = leading.Split('\n').ToList();
+        var lines = leading.Split('\n').Where(l => !IsRegionDirective(l)).ToList();
         while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[0])) lines.RemoveAt(0);
         while (lines.Count > 0 && string.IsNullOrWhiteSpace(lines[^1])) lines.RemoveAt(lines.Count - 1);
 
-        var text = source.Substring(member.SpanStart, member.FullSpan.End - member.SpanStart).TrimEnd();
+        var text = string.Join('\n', source.Substring(member.SpanStart, member.FullSpan.End - member.SpanStart)
+            .Split('\n').Where(l => !IsRegionDirective(l))).TrimEnd();
         var sb = new StringBuilder();
         if (lines.Count > 0)
             sb.Append(string.Join('\n', lines)).Append('\n').Append(indent);
         sb.Append(indent).Append(text);
         return sb.ToString();
+    }
+
+    /// <summary>
+    /// Existing #region/#endregion directives end up in a member's leading
+    /// trivia when a file is re-arranged a second time. They must not be
+    /// re-emitted (the emitter owns them), otherwise every pass duplicates the
+    /// tags and the result is never idempotent.
+    /// </summary>
+    private static bool IsRegionDirective(string line)
+    {
+        var trimmed = line.Trim();
+        return trimmed.StartsWith("#region", StringComparison.OrdinalIgnoreCase)
+            || trimmed.StartsWith("#endregion", StringComparison.OrdinalIgnoreCase);
     }
 }

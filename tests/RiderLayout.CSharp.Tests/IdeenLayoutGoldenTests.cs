@@ -87,4 +87,33 @@ public class IdeenLayoutGoldenTests
         var lines = source.Split('\n').Where(l => !l.Contains("#region") && !l.Contains("#endregion"));
         return string.Join('\n', lines);
     }
+
+    [Fact]
+    public void ReapplyingToAlreadyRegionedFileIsIdempotent()
+    {
+        // Re-running the layout on a file that already contains #region blocks
+        // must not duplicate the tags: the #region/#endregion directives must be
+        // stripped from member trivia and only the emitter's tags survive.
+        var full = Read("fixtures/csharp/expected/Player.regions.cs").Replace("\r\n", "\n").TrimEnd();
+        var input = full;
+
+        var layout = Read("fixtures/rider/ideen-layout.xml");
+        var pattern = new RiderLayoutXmlParser().Parse(layout).TypePatterns[0];
+        var regions = new RegionOptions
+        {
+            Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+            {
+                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
+                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+            }
+        };
+
+        var first = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();
+        var second = new CSharpRewriter().Rearrange(first, pattern, regions).Replace("\r\n", "\n").TrimEnd();
+
+        Assert.Equal(first, second);
+        Assert.Equal(full, first);
+    }
 }

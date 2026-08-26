@@ -69,6 +69,7 @@ See [docs/README.md](docs/README.md) (in the repository) for developer docs, and
 - New **Toggle Region Blocks** command (`riderLayout.toggleRegions`) switches the whole region feature on/off from the Command Palette
 - New `riderLayout.emitRegions` master switch — flipped by the command without touching your region selection
 - New `riderLayout.regions` setting — which regions become `#region` blocks (matches `<Region Name>` in the layout XML). All enabled by default; deselect to omit specific ones
+- `riderLayout.formatAfterRearrange` (default on) — runs the editor formatter (Shift+Alt+F) after the layout is applied
 - `ArrangeGroups` in the engine preserves region boundaries across consecutive entries, so sibling slots (e.g. static + instance fields) share one `#region`
 - Golden test covering region emission against `ideen-layout.xml`
 

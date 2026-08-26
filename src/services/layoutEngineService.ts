@@ -102,6 +102,15 @@ export class LayoutEngineService {
     return this.resolveLayout(folder.uri.fsPath);
   }
 
+  async formatDocument(document: vscode.TextDocument): Promise<void> {
+    const format = vscode.workspace.getConfiguration('riderLayout').get<boolean>('formatAfterRearrange', true);
+    if (!format) return;
+    const editor = vscode.window.visibleTextEditors.find(e => e.document === document)
+      ?? vscode.window.activeTextEditor;
+    if (!editor) return;
+    await vscode.commands.executeCommand('editor.action.formatDocument');
+  }
+
   private async resolveLayout(projectRoot: string): Promise<string> {
     if (!this.cachedLayout) {
       const { xml, missingFile } = await this.settings.resolve(projectRoot);
