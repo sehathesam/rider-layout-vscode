@@ -45,6 +45,7 @@ The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.
 | **Toggle Auto-Apply** | On/off automatic reorder when a `*.cs` gains focus |
 | **Toggle Format on Save** | On/off reorder before every save (default: off) |
 | **Rearrange Document** | Apply the layout to the current file now |
+| **Rearrange All C# Files** | Apply the layout to every `*.cs` in the workspace and save (one bulk change, ready to commit) |
 | **Preview Active Layout** | Show the active layout XML |
 
 ## 🔧 Settings
@@ -65,6 +66,9 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.5** — Rearrange whole project in one go:
+- New **Rearrange All C# Files** command applies the active layout to every `*.cs` in the workspace and saves each changed file, so you can review and commit the whole project's reformatting as a single change
+
 **v0.5.4** — No more false "Select Layout File" prompts:
 - Files with no class (lone interface, enum, using-only) are a silent no-op instead of raising "No class declaration found"
 - Removed the obsolete "Select Layout File" action from the auto-apply warning — a default layout is always bundled, so no prompt is needed

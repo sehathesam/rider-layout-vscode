@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "publisher": "sam1965",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,7 @@
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.resetLayout", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.resetLayout", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave", "onCommand:riderLayout.rearrangeAllFiles"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -22,6 +22,7 @@
       { "command": "riderLayout.toggleRegions", "title": "Rider Layout: Toggle Region Blocks" },
       { "command": "riderLayout.toggleFormatOnSave", "title": "Rider Layout: Toggle Format on Save" },
       { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
+      { "command": "riderLayout.rearrangeAllFiles", "title": "Rider Layout: Rearrange All C# Files" },
       { "command": "riderLayout.reload", "title": "Rider Layout: Reload Settings" },
       { "command": "riderLayout.preview", "title": "Rider Layout: Preview Active Layout" }
     ],
