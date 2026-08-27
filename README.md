@@ -35,7 +35,7 @@ Auto-apply is on by default. Flip a switch anytime with **Rider Layout: Toggle A
 ## 📚 Try the bundled StyleCop/Unity layout
 The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.xml`) that organizes classes in the order your team loves:
 
-`Injected Fields → Constants → Static fields → Fields → Serialized fields → Ctors → Events & Delegates → Properties → Interface implementations → Methods (public → protected → private, with Unity/RPC/none)`
+`Dependencies → Constants → Serialized fields → Static fields → Fields → Ctors → Events → Enums & Interfaces → Properties → Indexers → Interface implementations → Tests → RPC/Unity methods → Methods (public → internal → protected → private) → Nested types`
 
 ## 🛣️ Commands
 
@@ -66,6 +66,13 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.9** — Reworked bundled layout with explicit region priorities:
+- Every region in `ideen-layout.xml` now carries an explicit `Priority`, giving a single deterministic order across the whole type — no more relying on declaration order
+- **DEPENDENCIES** now matches constructor-injected `private readonly` fields (non-static, non-serialized, no initializer) and sits at the top with the highest priority
+- New granular access regions: **INTERNAL EVENTS**, **INTERNAL PROPERTIES**, **INTERNAL INDEXERS**, and an **INTERNAL METHODS** block — internal members are now split out instead of sharing the public region
+- Properties and indexers (public/internal/protected/private) plus methods/operators now carry `Not ImplementsInterface`, so interface implementations only ever match `INTERFACE IMPLEMENTATIONS`
+- Injected fields are excluded from the generic **Static fields** / **Fields** regions; **Serialized fields** and **RPC METHODS** keep their own slots
+
 **v0.5.8** — Cleaner interface-method routing in the bundled layout:
 - The bundled `ideen-layout.xml` now keeps **interface implementations** out of `PUBLIC METHODS` (they get `Not ImplementsInterface` in the matcher), so they live only in `INTERFACE IMPLEMENTATIONS` instead of appearing in both regions
 - `INTERFACE IMPLEMENTATIONS` entry renamed from "Explicit interface implementations" to the more accurate "Interface implementations"

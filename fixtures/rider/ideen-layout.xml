@@ -1,577 +1,687 @@
+<?xml version="1.0" encoding="utf-8"?>
 <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns"
-         xmlns:unity="urn:schemas-jetbrains-com:member-reordering-patterns-unity">
-
-
-
-
-   <!-- StyleCop Unity Classes Layout -->
-   <TypePattern DisplayName="StyleCop Unity Classes Layout" RemoveRegions="All" Priority="150">
-       <!--> Dependencies </!-->
-       <Region Name="DEPENDENCIES">
-           <Entry DisplayName="Injected Fields">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Field" />
-                       <Not>
-                           <unity:SerializedField />
-                       </Not>
-                       <Or>
-                           <HasAttribute Name="VContainer.InjectAttribute" Inherited="True" />
-                           <HasAttribute Name="Roham.Infrastructure.DependencyInjection.Attributes.DependencyAttribute" Inherited="True" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Constants </!-->
-       <Region Name="CONSTANTS">
-           <Entry DisplayName="Constants">
-               <Entry.Match>
-                   <Kind Is="Constant" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-       <!--> Fields </!-->
-       <Region Name="FIELDS">
-           <Entry DisplayName="Static fields">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Field" />
-                       <Static />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Kind Order="Constant Field" />
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Readonly />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Fields">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Field" />
-                       <Not>
-                           <unity:SerializedField />
-                       </Not>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Readonly />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Serialized Fields </!-->
-       <Region Name="SERIALIZED FIELDS" Priority="150">
-           <Entry DisplayName="Serialized Fields">
-               <Entry.Match>
-                   <unity:SerializedField />
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Constructors and Destructors </!-->
-       <Region Name="CTORS">
-           <Entry DisplayName="Constructors and destructors">
-               <Entry.Match>
-                   <Or>
-                       <Kind Is="Constructor" />
-                       <Kind Is="Destructor" />
-                   </Or>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Static />
-                   <Kind Order="Constructor Destructor" />
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Public Events and Delegates </!-->
-       <Region Name="PUBLIC EVENTS">
-           <Entry DisplayName="Delegates">
-               <Entry.Match>
-                   <Kind Is="Delegate" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Public events">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Event" />
-                       <Access Is="Public" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Protected Events </!-->
-       <Region Name="PROTECTED EVENTS">
-           <Entry DisplayName="Protected events">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Event" />
-                       <Or>
-                           <Access Is="Protected" />
-                           <Access Is="ProtectedInternal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Private Events </!-->
-       <Region Name="PRIVATE EVENTS">
-           <Entry DisplayName="Private events">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Event" />
-                       <Access Is="Private" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> ENUMS </!-->
-       <Region Name="ENUMS">
-           <Entry DisplayName="Enums">
-               <Entry.Match>
-                   <Kind Is="Enum" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-       <Region Name="Interfaces">
-           <Entry DisplayName="Interfaces">
-               <Entry.Match>
-                   <Kind Is="Interface" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Public Properties </!-->
-       <Region Name="PUBLIC PROPERTIES">
-           <Entry DisplayName="Public properties">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Property" />
-                       <Access Is="Public" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Protected Properties </!-->
-       <Region Name="PROTECTED PROPERTIES">
-           <Entry DisplayName="Protected properties">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Property" />
-                       <Or>
-                           <Access Is="Protected" />
-                           <Access Is="ProtectedInternal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Private Properties </!-->
-       <Region Name="PRIVATE PROPERTIES">
-           <Entry DisplayName="Private properties">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Property" />
-                       <Access Is="Private" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Public Indexers </!-->
-       <Region Name="PUBLIC INDEXERS">
-           <Entry DisplayName="Public indexers">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Indexer" />
-                       <Access Is="Public" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Protected Indexers </!-->
-       <Region Name="PROTECTED INDEXERS">
-           <Entry DisplayName="Protected indexers">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Indexer" />
-                       <Or>
-                           <Access Is="Protected" />
-                           <Access Is="ProtectedInternal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Private Indexers </!-->
-       <Region Name="PRIVATE INDEXERS">
-           <Entry DisplayName="Private indexers">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Indexer" />
-                       <Access Is="Private" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Setup and Teardown </!-->
-       <Region Name="SETUP AND TEARDOWN">
-           <Entry DisplayName="Setup/Teardown Methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Or>
-                           <HasAttribute Name="NUnit.Framework.SetUpAttribute" Inherited="True" />
-                           <HasAttribute Name="NUnit.Framework.TearDownAttribute" Inherited="True" />
-                           <HasAttribute Name="NUnit.Framework.FixtureSetUpAttribute" Inherited="True" />
-                           <HasAttribute Name="NUnit.Framework.FixtureTearDownAttribute" Inherited="True" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <Region Name="INTERFACE IMPLEMENTATIONS" Priority="200">
-           <Entry DisplayName="Interface implementations">
-               <Entry.Match>
-                   <And>
-                       <ImplementsInterface />
-                       <Or>
-                           <Kind Is="Method" />
-                           <Kind Is="Property" />
-                           <Kind Is="Indexer" />
-                           <Kind Is="Event" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Kind Order="Method Property Indexer Event" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-       <!--> Tests </!-->
-       <Region Name="TESTS">
-           <Entry DisplayName="Test Methods" Priority="100">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <HasAttribute Name="NUnit.Framework.TestAttribute" />
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Public Methods </!-->
-       <Region Name="PUBLIC METHODS">
-           <Entry DisplayName="Public operators">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Operator" />
-                       <Or>
-                           <Access Is="Public" />
-                           <Access Is="Internal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-                   <Virtual />
-                   <Override />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Public methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Or>
-                           <Access Is="Public" />
-                           <Access Is="Internal" />
-                       </Or>
-                       <Not>
-                           <ImplementsInterface />
-                       </Not>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-                   <Virtual />
-                   <Override />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Protected Methods </!-->
-       <Region Name="PROTECTED METHODS">
-           <Entry DisplayName="Protected Operators">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Operator" />
-                       <Or>
-                           <Access Is="Protected" />
-                           <Access Is="ProtectedInternal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-                   <Virtual />
-                   <Override />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Protected Methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Or>
-                           <Access Is="Protected" />
-                           <Access Is="ProtectedInternal" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-                   <Virtual />
-                   <Override />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Event Handlers </!-->
-       <Region Name="EVENT HANDLERS" Priority="100">
-           <Entry DisplayName="Event handlers">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Access Is="Private" />
-                       <HandlesEvent />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Unity Methods </!-->
-       <Region Name="UNITY METHODS" Priority="150">
-           <Entry DisplayName="Unity Methods">
-               <Entry.Match>
-                   <unity:EventFunction />
-               </Entry.Match>
-           </Entry>
-           <Entry DisplayName="NetworkBehaviours Methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method"/>
-                       <Or>
-                           <Name Is="OnNetworkPreSpawn" />
-                           <Name Is="OnNetworkSpawn" />
-                           <Name Is="OnNetworkPostSpawn" />
-                           <Name Is="OnNetworkPreDespawn" />
-                           <Name Is="OnNetworkDespawn" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Rpc Methods</!-->
-       <Region Name="RPC METHODS" Priority="500">
-           <Entry DisplayName="RPC Methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Or>
-                           <HasAttribute Name="Unity.Netcode.RpcAttribute" Inherited="True" />
-                           <HasAttribute Name="Unity.Netcode.ServerRpcAttribute" Inherited="True" />
-                           <HasAttribute Name="Unity.Netcode.ClientRpcAttribute" Inherited="True" />
-                       </Or>
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Private Methods </!-->
-       <Region Name="PRIVATE METHODS">
-           <Entry DisplayName="Private operators">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Operator" />
-                       <Access Is="Private" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Private methods">
-               <Entry.Match>
-                   <And>
-                       <Kind Is="Method" />
-                       <Access Is="Private" />
-                   </And>
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Access />
-                   <Static />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-
-
-
-
-       <!--> Nested Types </!-->
-       <Region Name="nested types">
-           <Entry DisplayName="Nested structs">
-               <Entry.Match>
-                   <Kind Is="Struct" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Static />
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-           <Entry DisplayName="Nested classes">
-               <Entry.Match>
-                   <Kind Is="Class" />
-               </Entry.Match>
-               <Entry.SortBy>
-                   <Static />
-                   <Access Order="Public Internal ProtectedInternal Protected Private" />
-               </Entry.SortBy>
-           </Entry>
-       </Region>
-       <Entry DisplayName="All other members" />
-   </TypePattern>
+          xmlns:unity="urn:schemas-jetbrains-com:member-reordering-patterns-unity">
+
+
+    <!-- Dependencies -->
+    <TypePattern DisplayName="StyleCop Unity Classes Layout"
+                 RemoveRegions="All"
+                 Priority="150">
+
+
+		<Region Name="DEPENDENCIES" Priority="1000">
+		   <Entry DisplayName="Private readonly dependencies">
+			   <Entry.Match>
+				   <And>
+					   <Kind Is="Field" />
+					   <Access Is="Private" />
+					   <Readonly />
+					   <Not>
+						   <Static />
+					   </Not>
+					   <Not>
+						   <HasInitializer />
+					   </Not>
+					   <Not>
+						   <unity:SerializedField />
+					   </Not>
+				   </And>
+			   </Entry.Match>
+			   <Entry.SortBy>
+				   <Access />
+			   </Entry.SortBy>
+		   </Entry>
+		</Region>
+
+
+
+
+        <!-- Constants -->
+        <Region Name="CONSTANTS" Priority="900">
+            <Entry DisplayName="Constants">
+                <Entry.Match>
+                    <Kind Is="Constant" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Static fields -->
+        <Region Name="STATIC FIELDS" Priority="800">
+            <Entry DisplayName="Static fields">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Field" />
+                        <Static />
+                        <Not>
+                            <unity:SerializedField />
+                        </Not>
+                        <Not>
+                            <Or>
+                                <HasAttribute Name="VContainer.InjectAttribute" Inherited="True" />
+                                <HasAttribute Name="Roham.Infrastructure.DependencyInjection.Attributes.DependencyAttribute"
+                                              Inherited="True" />
+                            </Or>
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                    <Readonly />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Instance fields -->
+        <Region Name="FIELDS" Priority="700">
+            <Entry DisplayName="Fields">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Field" />
+                        <Not>
+                            <Static />
+                        </Not>
+                        <Not>
+                            <unity:SerializedField />
+                        </Not>
+                        <Not>
+                            <Or>
+                                <HasAttribute Name="VContainer.InjectAttribute" Inherited="True" />
+                                <HasAttribute Name="Roham.Infrastructure.DependencyInjection.Attributes.DependencyAttribute"
+                                              Inherited="True" />
+                            </Or>
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                    <Readonly />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Serialized fields -->
+        <Region Name="SERIALIZED FIELDS" Priority="850">
+            <Entry DisplayName="Serialized fields">
+                <Entry.Match>
+                    <unity:SerializedField />
+                </Entry.Match>
+            </Entry>
+        </Region>
+
+
+        <!-- Constructors and destructors -->
+        <Region Name="CTORS" Priority="650">
+            <Entry DisplayName="Constructors and destructors">
+                <Entry.Match>
+                    <Or>
+                        <Kind Is="Constructor" />
+                        <Kind Is="Destructor" />
+                    </Or>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Kind Order="Constructor Destructor" />
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Delegates and events -->
+        <Region Name="PUBLIC EVENTS" Priority="600">
+            <Entry DisplayName="Delegates">
+                <Entry.Match>
+                    <Kind Is="Delegate" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Public events">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Event" />
+                        <Access Is="Public" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="INTERNAL EVENTS" Priority="590">
+            <Entry DisplayName="Internal events">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Event" />
+                        <Access Is="Internal" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PROTECTED EVENTS" Priority="580">
+            <Entry DisplayName="Protected events">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Event" />
+                        <Or>
+                            <Access Is="Protected" />
+                            <Access Is="ProtectedInternal" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PRIVATE EVENTS" Priority="570">
+            <Entry DisplayName="Private events">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Event" />
+                        <Access Is="Private" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Enums and interfaces -->
+        <Region Name="ENUMS" Priority="550">
+            <Entry DisplayName="Enums">
+                <Entry.Match>
+                    <Kind Is="Enum" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="INTERFACES" Priority="540">
+            <Entry DisplayName="Interfaces">
+                <Entry.Match>
+                    <Kind Is="Interface" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Properties -->
+        <Region Name="PUBLIC PROPERTIES" Priority="530">
+            <Entry DisplayName="Public properties">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Property" />
+                        <Access Is="Public" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="INTERNAL PROPERTIES" Priority="525">
+            <Entry DisplayName="Internal properties">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Property" />
+                        <Access Is="Internal" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PROTECTED PROPERTIES" Priority="520">
+            <Entry DisplayName="Protected properties">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Property" />
+                        <Or>
+                            <Access Is="Protected" />
+                            <Access Is="ProtectedInternal" />
+                        </Or>
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PRIVATE PROPERTIES" Priority="515">
+            <Entry DisplayName="Private properties">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Property" />
+                        <Access Is="Private" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Indexers -->
+        <Region Name="PUBLIC INDEXERS" Priority="510">
+            <Entry DisplayName="Public indexers">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Indexer" />
+                        <Access Is="Public" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="INTERNAL INDEXERS" Priority="505">
+            <Entry DisplayName="Internal indexers">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Indexer" />
+                        <Access Is="Internal" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PROTECTED INDEXERS" Priority="500">
+            <Entry DisplayName="Protected indexers">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Indexer" />
+                        <Or>
+                            <Access Is="Protected" />
+                            <Access Is="ProtectedInternal" />
+                        </Or>
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Region Name="PRIVATE INDEXERS" Priority="495">
+            <Entry DisplayName="Private indexers">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Indexer" />
+                        <Access Is="Private" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Setup and teardown -->
+        <Region Name="SETUP AND TEARDOWN" Priority="100">
+            <Entry DisplayName="Setup and teardown methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Or>
+                            <HasAttribute Name="NUnit.Framework.SetUpAttribute" Inherited="True" />
+                            <HasAttribute Name="NUnit.Framework.TearDownAttribute" Inherited="True" />
+                            <HasAttribute Name="NUnit.Framework.FixtureSetUpAttribute" Inherited="True" />
+                            <HasAttribute Name="NUnit.Framework.FixtureTearDownAttribute" Inherited="True" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+            </Entry>
+        </Region>
+
+
+        <!-- Interface implementations -->
+        <Region Name="INTERFACE IMPLEMENTATIONS" Priority="400">
+            <Entry DisplayName="Interface implementations">
+                <Entry.Match>
+                    <And>
+                        <ImplementsInterface />
+                        <Or>
+                            <Kind Is="Method" />
+                            <Kind Is="Property" />
+                            <Kind Is="Indexer" />
+                            <Kind Is="Event" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Kind Order="Method Property Indexer Event" />
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Tests -->
+        <Region Name="TESTS" Priority="150">
+            <Entry DisplayName="Test methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <HasAttribute Name="NUnit.Framework.TestAttribute" />
+                    </And>
+                </Entry.Match>
+            </Entry>
+        </Region>
+
+
+        <!-- RPC methods -->
+        <Region Name="RPC METHODS" Priority="500">
+            <Entry DisplayName="RPC methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Or>
+                            <HasAttribute Name="Unity.Netcode.RpcAttribute" Inherited="True" />
+                            <HasAttribute Name="Unity.Netcode.ServerRpcAttribute" Inherited="True" />
+                            <HasAttribute Name="Unity.Netcode.ClientRpcAttribute" Inherited="True" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Unity methods -->
+        <Region Name="UNITY METHODS" Priority="200">
+            <Entry DisplayName="Unity methods">
+                <Entry.Match>
+                    <unity:EventFunction />
+                </Entry.Match>
+            </Entry>
+
+
+            <Entry DisplayName="NetworkBehaviour methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Or>
+                            <Name Is="OnNetworkPreSpawn" />
+                            <Name Is="OnNetworkSpawn" />
+                            <Name Is="OnNetworkPostSpawn" />
+                            <Name Is="OnNetworkPreDespawn" />
+                            <Name Is="OnNetworkDespawn" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+            </Entry>
+        </Region>
+
+
+        <!-- Event handlers -->
+        <Region Name="EVENT HANDLERS" Priority="300">
+            <Entry DisplayName="Event handlers">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Access Is="Private" />
+                        <HandlesEvent />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Public operators and methods -->
+        <Region Name="PUBLIC METHODS" Priority="50">
+            <Entry DisplayName="Public operators">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Operator" />
+                        <Access Is="Public" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Public methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Access Is="Public" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Internal operators and methods -->
+        <Region Name="INTERNAL METHODS" Priority="45">
+            <Entry DisplayName="Internal operators">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Operator" />
+                        <Access Is="Internal" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Internal methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Access Is="Internal" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Protected operators and methods -->
+        <Region Name="PROTECTED METHODS" Priority="40">
+            <Entry DisplayName="Protected operators">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Operator" />
+                        <Or>
+                            <Access Is="Protected" />
+                            <Access Is="ProtectedInternal" />
+                        </Or>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Protected methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Or>
+                            <Access Is="Protected" />
+                            <Access Is="ProtectedInternal" />
+                        </Or>
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Private operators and methods -->
+        <Region Name="PRIVATE METHODS" Priority="30">
+            <Entry DisplayName="Private operators">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Operator" />
+                        <Access Is="Private" />
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Private methods">
+                <Entry.Match>
+                    <And>
+                        <Kind Is="Method" />
+                        <Access Is="Private" />
+                        <Not>
+                            <ImplementsInterface />
+                        </Not>
+                    </And>
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Virtual />
+                    <Override />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <!-- Nested types -->
+        <Region Name="NESTED TYPES" Priority="20">
+            <Entry DisplayName="Nested structs">
+                <Entry.Match>
+                    <Kind Is="Struct" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+
+
+            <Entry DisplayName="Nested classes">
+                <Entry.Match>
+                    <Kind Is="Class" />
+                </Entry.Match>
+                <Entry.SortBy>
+                    <Static />
+                    <Access Order="Public Internal ProtectedInternal Protected Private" />
+                </Entry.SortBy>
+            </Entry>
+        </Region>
+
+
+        <Entry DisplayName="All other members" />
+
+
+    </TypePattern>
 </Patterns>
+
+
+
