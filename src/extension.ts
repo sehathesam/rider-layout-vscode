@@ -3,6 +3,7 @@ import * as path from 'node:path';
 import { registerPreviewLayout } from './commands/previewLayout';
 import { registerRearrangeDocument } from './commands/rearrangeDocument';
 import { registerRearrangeAllFiles } from './commands/rearrangeAllFiles';
+import { registerAddIgnoreFolder } from './commands/addIgnoreFolder';
 import { registerReloadLayout } from './commands/reloadLayout';
 import { registerPickLayoutFile } from './commands/pickLayoutFile';
 import { registerResetLayout } from './commands/resetLayout';
@@ -29,6 +30,7 @@ export function activate(context: vscode.ExtensionContext): void {
     { dispose: () => { void engine.dispose(); } },
     registerRearrangeDocument(engine),
     registerRearrangeAllFiles(engine),
+    registerAddIgnoreFolder(),
     registerReloadLayout(engine),
     registerPickLayoutFile(engine),
     registerResetLayout(engine),

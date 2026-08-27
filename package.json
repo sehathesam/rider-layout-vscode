@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.5.5",
+  "version": "0.5.7",
   "publisher": "sam1965",
   "license": "MIT",
   "repository": {
@@ -12,7 +12,7 @@
   "engines": { "vscode": "^1.95.0" },
   "icon": "images/icon.png",
   "categories": ["Programming Languages", "Formatters", "Other"],
-  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.resetLayout", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave", "onCommand:riderLayout.rearrangeAllFiles"],
+  "activationEvents": ["onLanguage:csharp", "onCommand:riderLayout.pickLayoutFile", "onCommand:riderLayout.resetLayout", "onCommand:riderLayout.toggleEnabled", "onCommand:riderLayout.toggleRegions", "onCommand:riderLayout.toggleFormatOnSave", "onCommand:riderLayout.rearrangeAllFiles", "onCommand:riderLayout.addIgnoreFolder"],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
@@ -23,6 +23,7 @@
       { "command": "riderLayout.toggleFormatOnSave", "title": "Rider Layout: Toggle Format on Save" },
       { "command": "riderLayout.rearrangeDocument", "title": "Rider Layout: Rearrange Document" },
       { "command": "riderLayout.rearrangeAllFiles", "title": "Rider Layout: Rearrange All C# Files" },
+      { "command": "riderLayout.addIgnoreFolder", "title": "Rider Layout: Add Ignored Folder" },
       { "command": "riderLayout.reload", "title": "Rider Layout: Reload Settings" },
       { "command": "riderLayout.preview", "title": "Rider Layout: Preview Active Layout" }
     ],
@@ -35,6 +36,12 @@
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
         "riderLayout.formatAfterRearrange": { "type": "boolean", "default": true, "description": "Format the document (Shift+Alt+F) after the layout is applied." },
         "riderLayout.cliPath": { "type": "string", "default": "" },
+        "riderLayout.ignoreFolders": {
+          "type": "array",
+          "items": { "type": "string" },
+          "default": ["Migrations"],
+          "markdownDescription": "Folder names (by name, at any depth) to skip in **Rearrange All C# Files**. `Migrations` is included by default. Add more with the file picker: [Add Ignored Folder…](command:riderLayout.addIgnoreFolder)"
+        },
         "riderLayout.settingsPath": {
           "type": ["string", "null"],
           "default": null,

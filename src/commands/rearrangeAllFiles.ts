@@ -23,7 +23,10 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
     if (choice !== 'Rearrange All C# Files') return;
 
     try {
-      const files = await vscode.workspace.findFiles('**/*.cs', '**/node_modules/**');
+      const ignoreFolders = config.get<string[]>('ignoreFolders', []);
+      const exclude = '**/node_modules/**';
+
+      const files = await vscode.workspace.findFiles('**/*.cs', exclude);
       const output = vscode.window.createOutputChannel('Rider Layout');
       let changed = 0;
       let failed = 0;
@@ -42,6 +45,9 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
             }
             progress.report({ message: `${i + 1}/${files.length}`, increment: 100 / files.length });
 
+            const fsPath = files[i].fsPath;
+            if (isInIgnoredFolder(fsPath, ignoreFolders)) continue;
+
             const document = await vscode.workspace.openTextDocument(files[i]);
             if (document.languageId !== 'csharp') continue;
 
@@ -50,29 +56,55 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
               rearranged = await engine.rearrange(document);
             } catch (error) {
               failed++;
-              output.appendLine(`Failed: ${files[i].fsPath} — ${error instanceof Error ? error.message : String(error)}`);
+              output.appendLine(`Failed: ${fsPath} — ${error instanceof Error ? error.message : String(error)}`);
+              try {
+                const formatEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+                  'vscode.executeFormatDocumentProvider',
+                  document.uri
+                );
+                if (formatEdits?.length) {
+                  const formatEdit = new vscode.WorkspaceEdit();
+                  formatEdit.set(document.uri, formatEdits);
+                  await vscode.workspace.applyEdit(formatEdit);
+                }
+                await document.save();
+              } catch (formatError) {
+                output.appendLine(`Format failed: ${document.uri.fsPath} — ${formatError instanceof Error ? formatError.message : String(formatError)}`);
+              }
               continue;
             }
 
             const original = document.getText();
             if (rearranged === original) continue;
 
+            const edit = new vscode.WorkspaceEdit();
             const fullRange = new vscode.Range(
               document.positionAt(0),
               document.positionAt(document.getText().length)
             );
-            const edit = new vscode.WorkspaceEdit();
             edit.replace(document.uri, fullRange, rearranged);
             await vscode.workspace.applyEdit(edit);
-            const open = vscode.workspace.textDocuments.find(d => d.uri.toString() === document.uri.toString());
-            const filePath = (open ?? document).uri.fsPath;
-            if (open) {
-              await open.save();
-            } else {
-              await vscode.workspace.fs.writeFile(document.uri, Buffer.from(rearranged, 'utf8'));
+
+            const format = config.get<boolean>('formatAfterRearrange', true);
+            if (format) {
+              try {
+                const formatEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+                  'vscode.executeFormatDocumentProvider',
+                  document.uri
+                );
+                if (formatEdits?.length) {
+                  const formatEdit = new vscode.WorkspaceEdit();
+                  formatEdit.set(document.uri, formatEdits);
+                  await vscode.workspace.applyEdit(formatEdit);
+                }
+              } catch (error) {
+                output.appendLine(`Format failed: ${document.uri.fsPath} — ${error instanceof Error ? error.message : String(error)}`);
+              }
             }
+
+            await document.save();
             changed++;
-            output.appendLine(`Updated: ${filePath}`);
+            output.appendLine(`Updated: ${document.uri.fsPath}`);
           }
         }
       );
@@ -89,5 +121,14 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
     } catch (error) {
       void vscode.window.showErrorMessage(`Rider Layout: ${error instanceof Error ? error.message : String(error)}`);
     }
+  });
+}
+
+function isInIgnoredFolder(fsPath: string, ignoreFolders: string[]): boolean {
+  const normalizedPath = fsPath.replace(/\\/g, '/');
+  return ignoreFolders.some(folder => {
+    const normalized = folder.trim().replace(/\\/g, '/');
+    if (!normalized) return false;
+    return normalizedPath.split('/').slice(0, -1).includes(normalized);
   });
 }

@@ -66,8 +66,12 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
-**v0.5.5** — Rearrange whole project in one go:
-- New **Rearrange All C# Files** command applies the active layout to every `*.cs` in the workspace and saves each changed file, so you can review and commit the whole project's reformatting as a single change
+**v0.5.7** — Ignore folders + always format:
+- New **Add Ignored Folder** command (and `riderLayout.ignoreFolders` setting, `Migrations` by default) lets you skip folders like EF `Migrations` in **Rearrange All C# Files**
+- Files the layout can't process are still formatted (Shift+Alt+F equivalent) and saved instead of being skipped
+
+**v0.5.6** — Rearrange whole project in one go:
+- New **Rearrange All C# Files** command applies the active layout to every `*.cs` in the workspace, runs the formatter (Shift+Alt+F equivalent) on each changed file, and saves it — ready to review and commit as a single change
 
 **v0.5.4** — No more false "Select Layout File" prompts:
 - Files with no class (lone interface, enum, using-only) are a silent no-op instead of raising "No class declaration found"
