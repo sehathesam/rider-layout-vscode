@@ -66,6 +66,10 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.8** — Cleaner interface-method routing in the bundled layout:
+- The bundled `ideen-layout.xml` now keeps **interface implementations** out of `PUBLIC METHODS` (they get `Not ImplementsInterface` in the matcher), so they live only in `INTERFACE IMPLEMENTATIONS` instead of appearing in both regions
+- `INTERFACE IMPLEMENTATIONS` entry renamed from "Explicit interface implementations" to the more accurate "Interface implementations"
+
 **v0.5.7** — Ignore folders + always format:
 - New **Add Ignored Folder** command (and `riderLayout.ignoreFolders` setting, `Migrations` by default) lets you skip folders like EF `Migrations` in **Rearrange All C# Files**
 - Files the layout can't process are still formatted (Shift+Alt+F equivalent) and saved instead of being skipped
