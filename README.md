@@ -3,6 +3,8 @@
 
 > The missing piece for C# developers who love Rider's *member arrangement* but work in VS Code. Point it at your Rider layout, and your files organize themselves — no new formatter to learn, no config abuse.
 
+> 🌐 **[atishbazi.tech](https://atishbazi.tech/)** — homepage with docs, screenshots, and installation instructions.
+
 ---
 
 ## 🎯 What you get
@@ -66,6 +68,9 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.10** — New homepage:
+- Added the extension homepage at [atishbazi.tech](https://atishbazi.tech/) — docs, screenshots, and installation instructions in one place
+
 **v0.5.9** — Reworked bundled layout with explicit region priorities:
 - Every region in `ideen-layout.xml` now carries an explicit `Priority`, giving a single deterministic order across the whole type — no more relying on declaration order
 - **DEPENDENCIES** now matches constructor-injected `private readonly` fields (non-static, non-serialized, no initializer) and sits at the top with the highest priority
