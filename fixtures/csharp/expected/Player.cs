@@ -3,7 +3,7 @@ using VContainer;
 
 public class Player : MonoBehaviour, IDamageable
 {
-    [Inject] private IPlayerStats _stats;
+    [Inject] private readonly IPlayerStats _stats;
 
     public const float MaxHealth = 100f;
 
@@ -37,10 +37,6 @@ public class Player : MonoBehaviour, IDamageable
 
     void IDamageable.ApplyDamage(int amount) { }
 
-    public void Move() { }
-
-    public static Player Create() => new Player();
-
     void Awake() { }
 
     void Update() { }
@@ -48,6 +44,10 @@ public class Player : MonoBehaviour, IDamageable
     protected virtual void Reset() { }
 
     void OnCollisionEnter(Collision collision) { }
+
+    public void Move() { }
+
+    public static Player Create() => new Player();
 }
 
 public interface IDamageable

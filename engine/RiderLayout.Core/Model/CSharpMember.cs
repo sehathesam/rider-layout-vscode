@@ -7,6 +7,7 @@ public sealed class CSharpMember
     public Accessibility Access { get; init; }
     public bool IsStatic { get; init; }
     public bool IsReadonly { get; init; }
+    public bool HasInitializer { get; init; }
     public bool IsAbstract { get; init; }
     public bool IsVirtual { get; init; }
     public bool IsOverride { get; init; }

@@ -108,6 +108,13 @@ public sealed class SerializedFieldExpression : MatchExpression
         context.Member.Attributes.Any(a => AttributeNames.Matches(a, "SerializeField"));
 }
 
+public sealed class HasInitializerExpression(bool expected = true) : MatchExpression
+{
+    public bool Expected { get; } = expected;
+    public override bool Evaluate(MatchContext context) =>
+        context.Member.HasInitializer == Expected;
+}
+
 public sealed class UnityEventFunctionExpression : MatchExpression
 {
     private static readonly HashSet<string> EventFunctions = new(StringComparer.Ordinal)

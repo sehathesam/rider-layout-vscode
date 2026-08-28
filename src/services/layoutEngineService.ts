@@ -108,7 +108,9 @@ export class LayoutEngineService {
     });
 
     if (!response.success) throw new Error(response.error ?? 'Rider Layout engine failed.');
-    return response.source ?? document.getText();
+
+    const source = response.source ?? document.getText();
+    return normalizeToDocumentEol(source, document.eol);
   }
 
   async preview(document: vscode.TextDocument): Promise<string> {
@@ -144,4 +146,16 @@ export class LayoutEngineService {
     }
     return this.client;
   }
+}
+
+/**
+ * The CLI re-emits the class body with bare `\n` separators while splicing
+ * the rest of the file verbatim from the input. On Windows files are CRLF,
+ * so the raw engine output never equals a saved document and every reopen
+ * marks the file dirty. Normalize to the document's own EOL so comparisons
+ * and writes are byte-stable.
+ */
+function normalizeToDocumentEol(text: string, eol: vscode.EndOfLine): string {
+  const normalized = text.replace(/\r\n?/g, '\n');
+  return eol === vscode.EndOfLine.CRLF ? normalized.replace(/\n/g, '\r\n') : normalized;
 }

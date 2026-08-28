@@ -170,6 +170,8 @@ public sealed class RiderLayoutXmlParser
                 return new AttributeExpression((string?)element.Attribute("Name") ?? (string?)element.Attribute("Is") ?? "");
             case "SerializedField":
                 return new SerializedFieldExpression();
+            case "HasInitializer":
+                return new HasInitializerExpression(ParseBoolAttribute(element, "Is", true));
             case "EventFunction":
                 return new UnityEventFunctionExpression();
             case "ImplementsInterface":

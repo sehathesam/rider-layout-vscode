@@ -48,4 +48,17 @@ public class SemanticMatcherTests
         Assert.True(expr.Evaluate(new MatchContext(Member("Execute", isExplicit: true))));
         Assert.False(expr.Evaluate(new MatchContext(Member("Execute", isExplicit: false))));
     }
+
+    [Fact]
+    public void HasInitializerDistinguishesFieldWithAndWithoutInitializer()
+    {
+        var withInit = new CSharpMember { Name = "speed", Kind = MemberKind.Field, HasInitializer = true };
+        var withoutInit = new CSharpMember { Name = "_stats", Kind = MemberKind.Field, HasInitializer = false };
+
+        Assert.True(new HasInitializerExpression().Evaluate(new MatchContext(withInit)));
+        Assert.False(new HasInitializerExpression().Evaluate(new MatchContext(withoutInit)));
+
+        Assert.False(new HasInitializerExpression(expected: false).Evaluate(new MatchContext(withInit)));
+        Assert.True(new HasInitializerExpression(expected: false).Evaluate(new MatchContext(withoutInit)));
+    }
 }

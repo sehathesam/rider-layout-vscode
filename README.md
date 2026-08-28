@@ -68,6 +68,11 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.12** — HasInitializer matcher, CRLF stability & ignore-folder fixes:
+- New `HasInitializer` matcher (via `<HasInitializer/>` / `<HasInitializer Is="false"/>`) — layouts can now tell fields with an initializer apart from ones assigned elsewhere (e.g. constructor-injected dependencies), in the same spirit as `SerializedField`
+- Rearranged output is normalized to the document's own line endings, so Windows/CRLF files no longer open as dirty right after auto-apply
+- **Add Ignored Folder** no longer drops the built-in defaults (e.g. `Migrations`) when saving to workspace settings, matches folders case-insensitively, and **Rearrange All C# Files** handles nested paths with `\`/`/` separators correctly
+
 **v0.5.11** — Preserved closing-brace indentation:
 - The rewriter no longer collapses the closing brace of a nested type to column zero; it now inherits the original indentation level, so rearranged nested classes stay properly nested
 

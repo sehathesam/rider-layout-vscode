@@ -41,11 +41,11 @@ public class IdeenLayoutGoldenTests
         {
             Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
-                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
-                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
-                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
-            }
+            "DEPENDENCIES", "CONSTANTS", "STATIC FIELDS", "FIELDS", "SERIALIZED FIELDS",
+            "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+            "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+            "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+        }
         };
 
         var actual = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();
@@ -70,11 +70,11 @@ public class IdeenLayoutGoldenTests
         {
             Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
-                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
-                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
-                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
-            }
+            "DEPENDENCIES", "CONSTANTS", "STATIC FIELDS", "FIELDS", "SERIALIZED FIELDS",
+            "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+            "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+            "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+        }
         };
 
         var actual = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();
@@ -103,11 +103,11 @@ public class IdeenLayoutGoldenTests
         {
             Enabled = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
             {
-                "DEPENDENCIES", "CONSTANTS", "FIELDS", "SERIALIZED FIELDS",
-                "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
-                "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
-                "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
-            }
+            "DEPENDENCIES", "CONSTANTS", "STATIC FIELDS", "FIELDS", "SERIALIZED FIELDS",
+            "CTORS", "PUBLIC EVENTS", "PRIVATE EVENTS",
+            "PUBLIC PROPERTIES", "PRIVATE PROPERTIES",
+            "INTERFACE IMPLEMENTATIONS", "PUBLIC METHODS", "UNITY METHODS"
+        }
         };
 
         var first = new CSharpRewriter().Rearrange(input, pattern, regions).Replace("\r\n", "\n").TrimEnd();

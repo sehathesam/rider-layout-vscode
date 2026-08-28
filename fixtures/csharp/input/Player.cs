@@ -3,7 +3,7 @@ using VContainer;
 
 public class Player : MonoBehaviour, IDamageable
 {
-    [Inject] private IPlayerStats _stats;
+    [Inject] private readonly IPlayerStats _stats;
     [SerializeField] private float speed = 10f;
     private int _director;
 

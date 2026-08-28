@@ -5,7 +5,7 @@ public class Player : MonoBehaviour, IDamageable
 {
     #region DEPENDENCIES
 
-    [Inject] private IPlayerStats _stats;
+    [Inject] private readonly IPlayerStats _stats;
 
     #endregion
 
@@ -17,11 +17,15 @@ public class Player : MonoBehaviour, IDamageable
 
     #endregion
 
-    #region FIELDS
+    #region STATIC FIELDS
 
     public static int Count;
 
     private static int _seed;
+
+    #endregion
+
+    #region FIELDS
 
     private int _director;
 
@@ -77,14 +81,6 @@ public class Player : MonoBehaviour, IDamageable
 
     #endregion
 
-    #region PUBLIC METHODS
-
-    public void Move() { }
-
-    public static Player Create() => new Player();
-
-    #endregion
-
     #region UNITY METHODS
 
     void Awake() { }
@@ -94,6 +90,14 @@ public class Player : MonoBehaviour, IDamageable
     protected virtual void Reset() { }
 
     void OnCollisionEnter(Collision collision) { }
+
+    #endregion
+
+    #region PUBLIC METHODS
+
+    public void Move() { }
+
+    public static Player Create() => new Player();
 
     #endregion
 }

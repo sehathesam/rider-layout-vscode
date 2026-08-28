@@ -234,6 +234,8 @@ private static string? ResolveFieldTarget(
             Access = GetAccess(node),
             IsStatic = node.Modifiers.Any(x => x.Kind() == SyntaxKind.StaticKeyword),
             IsReadonly = node.Modifiers.Any(x => x.Kind() == SyntaxKind.ReadOnlyKeyword),
+            HasInitializer = node is FieldDeclarationSyntax fieldDecl
+                && fieldDecl.Declaration.Variables.Any(v => v.Initializer is not null),
             IsAbstract = node.Modifiers.Any(x => x.Kind() == SyntaxKind.AbstractKeyword),
             IsVirtual = node.Modifiers.Any(x => x.Kind() == SyntaxKind.VirtualKeyword),
             IsOverride = node.Modifiers.Any(x => x.Kind() == SyntaxKind.OverrideKeyword),
