@@ -44,6 +44,9 @@ public sealed class CSharpRewriter
         var openBrace = declaration.OpenBraceToken;
         var closeBrace = declaration.CloseBraceToken;
 
+        var closeLineStart = source.LastIndexOf('\n', closeBrace.SpanStart - 1) + 1;
+        var closeIndent = source[closeLineStart..closeBrace.SpanStart];
+
         var firstMember = declaration.Members[0];
         var lineStart = source.LastIndexOf('\n', firstMember.SpanStart - 1) + 1;
         var indent = source[lineStart..firstMember.SpanStart];
@@ -69,6 +72,7 @@ public sealed class CSharpRewriter
         }
 
         builder.Append('\n');
+        builder.Append(closeIndent);
         builder.Append(source, closeBrace.SpanStart, source.Length - closeBrace.SpanStart);
         return builder.ToString();
     }

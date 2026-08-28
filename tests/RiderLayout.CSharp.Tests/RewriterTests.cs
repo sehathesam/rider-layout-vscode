@@ -144,6 +144,37 @@ public class RewriterTests
     }
 
     [Fact]
+    public void PreservesIndentationOfClosingBraceInNestedClass()
+    {
+        const string xml = """
+        <Patterns xmlns="urn:schemas-jetbrains-com:member-reordering-patterns">
+          <TypePattern DisplayName="Default">
+            <Entry DisplayName="Fields"><Entry.Match><Kind Is="Field" /></Entry.Match></Entry>
+            <Entry DisplayName="Methods"><Entry.Match><Kind Is="Method" /></Entry.Match></Entry>
+          </TypePattern>
+        </Patterns>
+        """;
+
+        const string input = """
+        namespace App
+        {
+            public class Demo
+            {
+                public void Z() { }
+                private int _x;
+                public void A() { }
+            }
+        }
+        """;
+
+        var pattern = new RiderLayoutXmlParser().Parse(xml).TypePatterns[0];
+        var output = new CSharpRewriter().Rearrange(input, pattern).Replace("\r\n", "\n");
+
+        Assert.True(output.Contains("\n    }\n}", StringComparison.Ordinal));
+        Assert.False(output.Contains("\n}\n}", StringComparison.Ordinal));
+    }
+
+    [Fact]
     public void FileWithoutClassReturnsUnchanged()
     {
         const string source = """

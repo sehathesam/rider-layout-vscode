@@ -68,6 +68,9 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.5.11** — Preserved closing-brace indentation:
+- The rewriter no longer collapses the closing brace of a nested type to column zero; it now inherits the original indentation level, so rearranged nested classes stay properly nested
+
 **v0.5.10** — New homepage:
 - Added the extension homepage at [atishbazi.tech](https://atishbazi.tech/) — docs, screenshots, and installation instructions in one place
 
