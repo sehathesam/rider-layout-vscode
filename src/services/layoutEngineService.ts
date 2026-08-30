@@ -120,12 +120,21 @@ export class LayoutEngineService {
   }
 
   async formatDocument(document: vscode.TextDocument): Promise<void> {
-    const format = vscode.workspace.getConfiguration('riderLayout').get<boolean>('formatAfterRearrange', true);
-    if (!format) return;
     const editor = vscode.window.visibleTextEditors.find(e => e.document === document)
       ?? vscode.window.activeTextEditor;
-    if (!editor) return;
-    await vscode.commands.executeCommand('editor.action.formatDocument');
+    if (editor) {
+      await vscode.commands.executeCommand('editor.action.formatDocument');
+      return;
+    }
+    const edits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+      'vscode.executeFormatDocumentProvider',
+      document.uri
+    );
+    if (edits?.length) {
+      const edit = new vscode.WorkspaceEdit();
+      edit.set(document.uri, edits);
+      await vscode.workspace.applyEdit(edit);
+    }
   }
 
   private async resolveLayout(projectRoot: string): Promise<string> {

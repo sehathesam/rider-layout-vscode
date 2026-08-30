@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
+import { differsStructurally } from '../utils/documentUtils';
 
 export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.Disposable {
   return vscode.commands.registerCommand('riderLayout.rearrangeAllFiles', async () => {
@@ -75,7 +76,7 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
             }
 
             const original = document.getText();
-            if (rearranged === original) continue;
+            if (!differsStructurally(original, rearranged)) continue;
 
             const edit = new vscode.WorkspaceEdit();
             const fullRange = new vscode.Range(
@@ -85,21 +86,18 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
             edit.replace(document.uri, fullRange, rearranged);
             await vscode.workspace.applyEdit(edit);
 
-            const format = config.get<boolean>('formatAfterRearrange', true);
-            if (format) {
-              try {
-                const formatEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
-                  'vscode.executeFormatDocumentProvider',
-                  document.uri
-                );
-                if (formatEdits?.length) {
-                  const formatEdit = new vscode.WorkspaceEdit();
-                  formatEdit.set(document.uri, formatEdits);
-                  await vscode.workspace.applyEdit(formatEdit);
-                }
-              } catch (error) {
-                output.appendLine(`Format failed: ${document.uri.fsPath} — ${error instanceof Error ? error.message : String(error)}`);
+            try {
+              const formatEdits = await vscode.commands.executeCommand<vscode.TextEdit[]>(
+                'vscode.executeFormatDocumentProvider',
+                document.uri
+              );
+              if (formatEdits?.length) {
+                const formatEdit = new vscode.WorkspaceEdit();
+                formatEdit.set(document.uri, formatEdits);
+                await vscode.workspace.applyEdit(formatEdit);
               }
+            } catch (error) {
+              output.appendLine(`Format failed: ${document.uri.fsPath} — ${error instanceof Error ? error.message : String(error)}`);
             }
 
             await document.save();

@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.5.12",
+  "version": "0.6.0",
   "publisher": "sam1965",
   "license": "MIT",
   "homepage": "https://atishbazi.tech/",
@@ -35,7 +35,6 @@
         "riderLayout.autoApplyOnFocus": { "type": "boolean", "default": true, "description": "Automatically apply the active Rider layout whenever a C# file gains focus." },
         "riderLayout.autoDetect": { "type": "boolean", "default": true },
         "riderLayout.formatOnSave": { "type": "boolean", "default": false },
-        "riderLayout.formatAfterRearrange": { "type": "boolean", "default": true, "description": "Format the document (Shift+Alt+F) after the layout is applied." },
         "riderLayout.cliPath": { "type": "string", "default": "" },
         "riderLayout.ignoreFolders": {
           "type": "array",

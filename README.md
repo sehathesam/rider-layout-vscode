@@ -68,6 +68,11 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.6.0** — Always format + workspace/diff aware:
+- The document is **always** formatted after the layout is applied (Shift+Alt+F), in every path — the `riderLayout.formatAfterRearrange` switch is gone
+- Files outside the current workspace (opened directly, untitled, `git:` etc.) are never touched
+- Files shown in the git diff (both class versions side by side) are skipped — reviewing changes no longer moves the working file
+
 **v0.5.12** — HasInitializer matcher, CRLF stability & ignore-folder fixes:
 - New `HasInitializer` matcher (via `<HasInitializer/>` / `<HasInitializer Is="false"/>`) — layouts can now tell fields with an initializer apart from ones assigned elsewhere (e.g. constructor-injected dependencies), in the same spirit as `SerializedField`
 - Rearranged output is normalized to the document's own line endings, so Windows/CRLF files no longer open as dirty right after auto-apply

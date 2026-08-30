@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
+import { differsStructurally, isShownInDiffEditor, isWorkspaceDocument } from '../utils/documentUtils';
 
 export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Disposable {
   const applied = new WeakSet<vscode.TextDocument>();
@@ -7,6 +8,8 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
 
   async function applyIfNeeded(editor?: vscode.TextEditor): Promise<void> {
     if (!editor || editor.document.languageId !== 'csharp') return;
+    if (!isWorkspaceDocument(editor.document)) return;
+    if (isShownInDiffEditor(editor.document)) return;
     if (inFlight) return;
 
     const config = vscode.workspace.getConfiguration('riderLayout');
@@ -17,7 +20,7 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
     try {
       inFlight = true;
       const output = await engine.rearrange(editor.document);
-      if (output !== editor.document.getText()) {
+      if (differsStructurally(editor.document.getText(), output)) {
         const fullRange = new vscode.Range(
           editor.document.positionAt(0),
           editor.document.positionAt(editor.document.getText().length)
@@ -26,8 +29,8 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
           undoStopBefore: false,
           undoStopAfter: false
         });
+        await engine.formatDocument(editor.document);
       }
-      await engine.formatDocument(editor.document);
       applied.add(editor.document);
     } catch (error) {
       // A default layout is always bundled, so a failure here is an engine

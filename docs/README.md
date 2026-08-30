@@ -63,7 +63,6 @@ on C# files, on `riderLayout.pickLayoutFile`, and `riderLayout.toggleEnabled`.
 | `riderLayout.autoApplyOnFocus` | `true` | Reorder a `*.cs` when it gains focus. |
 | `riderLayout.autoDetect` | `true` | Auto-discover `.DotSettings`/`.idea` layouts. |
 | `riderLayout.formatOnSave` | `false` | Apply layout on save. |
-| `riderLayout.formatAfterRearrange` | `true` | Run the editor formatter (Shift+Alt+F) after the layout is applied. |
 | `riderLayout.cliPath` | `""` | Path to a published `RiderLayout.Cli.dll`. |
 | `riderLayout.settingsPath` | `null` | Explicit path to a layout file. |
 | `riderLayout.emitRegions` | `true` | Master switch for emitting `#region` blocks. Flipped by the **Toggle Region Blocks** command without changing your region selection. |
