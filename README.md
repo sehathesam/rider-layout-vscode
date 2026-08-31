@@ -57,6 +57,7 @@ The repo includes a working StyleCop-class layout (`fixtures/rider/ideen-layout.
 - `riderLayout.autoDetect` — discover layout in `.idea` / `.Settings` in workspace
 - `riderLayout.formatOnSave` — apply on save (default `false`)
 - `riderLayout.settingsPath` — explicit path to your layout file (leave empty for the bundled default)
+- `riderLayout.ignoreFolders` — folder names to skip in **Rearrange All C# Files**, **Auto-Apply on Focus**, **Format on Save** and **Rearrange Document** (default `Migrations`). Folder names from your `.gitignore` are added here automatically on activation. Use this for generated folders like `obj`, `bin`.
 
 ## Development
 
@@ -68,6 +69,15 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.6.2** — Ignore folders honored everywhere:
+- `riderLayout.ignoreFolders` now also applies to **Auto-Apply on Focus**, **Format on Save** and **Rearrange Document** — previously these paths rewrote files even when their folder (e.g. `obj`, `bin`) was in the ignore list, so generated files like `obj/Debug/net10.0/Protos/*.cs` were still modified on open
+- Folders are still matched by name at any depth, so one `obj` entry covers `obj/Debug/…` too
+
+**v0.6.1** — `.gitignore`-aware ignore folders:
+- On activation, each workspace root's `.gitignore` (if present) is read and the ignored **folder** entries (e.g. `node_modules`, `build/`, `.idea/`) are merged into `riderLayout.ignoreFolders` automatically
+- Skipped as before: negations (`!`), file patterns (`*.log`, `foo/bar.cs`), glob/braces (`**`, `*`, `[...]`), and inline/marker comments
+- Existing values and the built-in `Migrations` default are preserved — only genuinely new folders are added (case-insensitive), logged to the **Rider Layout** output channel
+
 **v0.6.0** — Always format + workspace/diff aware:
 - The document is **always** formatted after the layout is applied (Shift+Alt+F), in every path — the `riderLayout.formatAfterRearrange` switch is gone
 - Files outside the current workspace (opened directly, untitled, `git:` etc.) are never touched

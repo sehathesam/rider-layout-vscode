@@ -2,7 +2,7 @@
   "name": "rider-layout",
   "displayName": "Rider Layout for C#",
   "description": "Applies JetBrains Rider-compatible C# file and type layout patterns in VS Code.",
-  "version": "0.6.0",
+  "version": "0.6.2",
   "publisher": "sam1965",
   "license": "MIT",
   "homepage": "https://atishbazi.tech/",
@@ -40,7 +40,7 @@
           "type": "array",
           "items": { "type": "string" },
           "default": ["Migrations"],
-          "markdownDescription": "Folder names (by name, at any depth) to skip in **Rearrange All C# Files**. `Migrations` is included by default. Add more with the file picker: [Add Ignored Folder…](command:riderLayout.addIgnoreFolder)"
+          "markdownDescription": "Folder names (by name, at any depth) to skip in **Rearrange All C# Files**, **Auto-Apply on Focus**, **Format on Save** and **Rearrange Document**. `Migrations` is included by default; ignored folders from your `.gitignore` are added automatically on activation. Add more with the file picker: [Add Ignored Folder…](command:riderLayout.addIgnoreFolder)"
         },
         "riderLayout.settingsPath": {
           "type": ["string", "null"],

@@ -1,12 +1,14 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
 import { differsStructurally, isShownInDiffEditor, isWorkspaceDocument } from '../utils/documentUtils';
+import { isIgnoredDocument } from '../utils/ignoreFolders';
 
 export function registerFormatOnSave(engine: LayoutEngineService): vscode.Disposable {
   return vscode.workspace.onWillSaveTextDocument(event => {
     if (event.document.languageId !== 'csharp') return;
     if (!isWorkspaceDocument(event.document)) return;
     if (isShownInDiffEditor(event.document)) return;
+    if (isIgnoredDocument(event.document)) return;
 
     const config = vscode.workspace.getConfiguration('riderLayout');
     if (!config.get<boolean>('enabled', true)) return;

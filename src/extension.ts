@@ -15,10 +15,14 @@ import { registerAutoApplyLayout } from './commands/autoApplyLayout';
 import { LayoutEngineService } from './services/layoutEngineService';
 import { RiderSettingsService } from './services/riderSettingsService';
 import { createOutputChannel } from './utils/logger';
+import { syncIgnoreFoldersFromGitignore } from './utils/gitignoreSync';
 import { RearrangeCodeActionProvider } from './providers/rearrangeCodeActionProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
   const output = createOutputChannel();
+  void syncIgnoreFoldersFromGitignore(output).catch(error => {
+    output.appendLine(`gitignore sync failed: ${error instanceof Error ? error.message : String(error)}`);
+  });
   const settings = new RiderSettingsService(
     output,
     path.join(context.extensionPath, 'media', 'ideen-layout.xml')

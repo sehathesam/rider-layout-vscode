@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
 import { differsStructurally, isShownInDiffEditor, isWorkspaceDocument } from '../utils/documentUtils';
+import { isIgnoredDocument } from '../utils/ignoreFolders';
 
 export function registerRearrangeDocument(engine: LayoutEngineService): vscode.Disposable {
   return vscode.commands.registerCommand('riderLayout.rearrangeDocument', async () => {
@@ -8,6 +9,7 @@ export function registerRearrangeDocument(engine: LayoutEngineService): vscode.D
     if (!editor || editor.document.languageId !== 'csharp') return;
     if (!isWorkspaceDocument(editor.document)) return;
     if (isShownInDiffEditor(editor.document)) return;
+    if (isIgnoredDocument(editor.document)) return;
 
     try {
       const output = await engine.rearrange(editor.document);

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
 import { differsStructurally, isShownInDiffEditor, isWorkspaceDocument } from '../utils/documentUtils';
+import { isIgnoredDocument } from '../utils/ignoreFolders';
 
 export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Disposable {
   const applied = new WeakSet<vscode.TextDocument>();
@@ -10,6 +11,7 @@ export function registerAutoApplyLayout(engine: LayoutEngineService): vscode.Dis
     if (!editor || editor.document.languageId !== 'csharp') return;
     if (!isWorkspaceDocument(editor.document)) return;
     if (isShownInDiffEditor(editor.document)) return;
+    if (isIgnoredDocument(editor.document)) return;
     if (inFlight) return;
 
     const config = vscode.workspace.getConfiguration('riderLayout');

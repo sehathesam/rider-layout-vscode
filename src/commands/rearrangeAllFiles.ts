@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { LayoutEngineService } from '../services/layoutEngineService';
 import { differsStructurally } from '../utils/documentUtils';
+import { isInIgnoredFolder } from '../utils/ignoreFolders';
 
 export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.Disposable {
   return vscode.commands.registerCommand('riderLayout.rearrangeAllFiles', async () => {
@@ -119,19 +120,5 @@ export function registerRearrangeAllFiles(engine: LayoutEngineService): vscode.D
     } catch (error) {
       void vscode.window.showErrorMessage(`Rider Layout: ${error instanceof Error ? error.message : String(error)}`);
     }
-  });
-}
-
-function isInIgnoredFolder(fsPath: string, ignoreFolders: string[]): boolean {
-  const normalizedPath = fsPath.replace(/\\/g, '/').toLowerCase();
-  const parents = normalizedPath.split('/').slice(0, -1);
-  return ignoreFolders.some(folder => {
-    const normalized = folder.trim().replace(/\\/g, '/').replace(/\/+$/, '').toLowerCase();
-    if (!normalized) return false;
-    if (normalized.includes('/')) {
-      const withSlash = normalized.endsWith('/') ? normalized : normalized + '/';
-      return normalizedPath.includes(withSlash) || normalizedPath.includes('/' + withSlash);
-    }
-    return parents.includes(normalized);
   });
 }
