@@ -17,6 +17,7 @@ import { RiderSettingsService } from './services/riderSettingsService';
 import { createOutputChannel } from './utils/logger';
 import { syncIgnoreFoldersFromGitignore } from './utils/gitignoreSync';
 import { RearrangeCodeActionProvider } from './providers/rearrangeCodeActionProvider';
+import { registerRegionSymbolProvider } from './providers/regionSymbolProvider';
 
 export function activate(context: vscode.ExtensionContext): void {
   const output = createOutputChannel();
@@ -44,6 +45,7 @@ export function activate(context: vscode.ExtensionContext): void {
     registerAutoApplyLayout(engine),
     registerFormatOnSave(engine),
     registerPreviewLayout(engine),
+    registerRegionSymbolProvider(),
     vscode.languages.registerCodeActionsProvider(
       { language: 'csharp' },
       new RearrangeCodeActionProvider(),

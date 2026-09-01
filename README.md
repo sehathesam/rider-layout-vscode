@@ -69,6 +69,11 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.7.0** — Regions in Go to Symbol (`Ctrl+Shift+O`) and Outline:
+- New document symbol provider makes every `#region` block in a `.cs` file navigable: press `Ctrl+Shift+O`, type the region name, or use the Outline/breadcrumbs — results are merged with the built-in C# members
+- Nested regions are shown as a tree; the C# extension's own symbols remain untouched
+- Works for both layout-emitted regions (`riderLayout.regions`) and hand-written ones
+
 **v0.6.2** — Ignore folders honored everywhere:
 - `riderLayout.ignoreFolders` now also applies to **Auto-Apply on Focus**, **Format on Save** and **Rearrange Document** — previously these paths rewrote files even when their folder (e.g. `obj`, `bin`) was in the ignore list, so generated files like `obj/Debug/net10.0/Protos/*.cs` were still modified on open
 - Folders are still matched by name at any depth, so one `obj` entry covers `obj/Debug/…` too
