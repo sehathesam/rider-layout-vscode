@@ -166,56 +166,26 @@ public class CSharpDocumentParserTests
     }
 
     [Fact]
-    public void DetectsImplicitImplementationOfInterfaceInAnotherFile()
+    public void InterfaceInAnotherFileIsNotDetectedWithoutProjectScan()
     {
-        var root = Path.Combine(Path.GetTempPath(), "riderlayout_" + Guid.NewGuid().ToString("N"));
-        Directory.CreateDirectory(root);
-
-        File.WriteAllText(Path.Combine(root, "IReply.cs"), """
-        namespace Homa.Logic
-        {
-            public interface IReply
-            {
-                void Init(Request request);
-                Task<GenericMessage> CreateGenericMessage();
-                void SetupResponse(ref Response response);
-                GenericMessage GenericMessage { get; }
-            }
-
-            public class Request { }
-            public class GenericMessage { }
-            public class Response { }
-        }
-        """);
-
+        // The project-wide tree scan was removed to keep the long-lived CLI's
+        // memory bounded. Interfaces declared in other files no longer resolve,
+        // so such members are left unflagged (fail-closed) rather than mis-sorted.
         const string source = """
         namespace App
         {
             public class ReplyHandler : Homa.Logic.IReply
             {
-                private Homa.Logic.Request request;
-
-                public virtual void Init(Homa.Logic.Request request)
-                {
-                    this.request = request;
-                }
-
+                public void Init() { }
                 public void Other() { }
             }
         }
         """;
 
-        try
-        {
-            var parsed = new CSharpDocumentParser().ParseFirstClass(source, root);
-            var byName = parsed.Members.ToDictionary(x => x.Name, x => x);
+        var parsed = new CSharpDocumentParser().ParseFirstClass(source);
+        var byName = parsed.Members.ToDictionary(x => x.Name, x => x);
 
-            Assert.True(byName["Init"].IsImplicitInterfaceImplementation);
-            Assert.False(byName["Other"].IsImplicitInterfaceImplementation);
-        }
-        finally
-        {
-            Directory.Delete(root, recursive: true);
-        }
+        Assert.False(byName["Init"].IsImplicitInterfaceImplementation);
+        Assert.False(byName["Other"].IsImplicitInterfaceImplementation);
     }
 }

@@ -12,7 +12,7 @@ public sealed class CSharpRewriter
     private readonly CSharpDocumentParser _parser = new();
     private readonly LayoutEngine _engine = new();
 
-    public string Rearrange(string source, TypePattern pattern, RegionOptions? regions = null, string? projectRoot = null)
+    public string Rearrange(string source, TypePattern pattern, RegionOptions? regions = null)
     {
         regions ??= new RegionOptions();
 
@@ -24,7 +24,7 @@ public sealed class CSharpRewriter
         ParsedClass parsed;
         try
         {
-            parsed = _parser.ParseFirstClass(source, projectRoot);
+            parsed = _parser.ParseFirstClass(source, PatternUsesImplementsInterface(pattern));
         }
         catch (InvalidOperationException)
         {
@@ -164,4 +164,38 @@ public sealed class CSharpRewriter
         };
         return pattern.Match.Evaluate(new MatchContext(rough));
     }
+
+    /// <summary>
+    /// Semantic analysis (implicit interface detection) is only needed when the
+    /// layout actually matches on ImplementsInterface. Every other layout takes
+    /// a parse-only fast path, so the persistent CLI never loads the framework
+    /// metadata or builds a semantic model for it.
+    /// </summary>
+    private static bool PatternUsesImplementsInterface(TypePattern pattern)
+    {
+        if (pattern.Match is not null && UsesInterfaceMatcher(pattern.Match)) return true;
+
+        foreach (var node in pattern.Children)
+        {
+            switch (node)
+            {
+                case EntryNode entry when entry.Match is not null && UsesInterfaceMatcher(entry.Match):
+                    return true;
+                case RegionNode region when region.Children.OfType<EntryNode>().Any(
+                    e => e.Match is not null && UsesInterfaceMatcher(e.Match)):
+                    return true;
+            }
+        }
+
+        return false;
+    }
+
+    private static bool UsesInterfaceMatcher(MatchExpression expression) => expression switch
+    {
+        AndExpression and => and.Children.Any(x => UsesInterfaceMatcher(x)),
+        OrExpression or => or.Children.Any(x => UsesInterfaceMatcher(x)),
+        NotExpression not => UsesInterfaceMatcher(not.Child),
+        ExplicitInterfaceExpression => true,
+        _ => false
+    };
 }

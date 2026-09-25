@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using Roslyn = Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -14,7 +13,15 @@ public sealed class ParsedClass
 
 public sealed class CSharpDocumentParser
 {
-    public ParsedClass ParseFirstClass(string source, string? projectRoot = null)
+    /// <summary>
+    /// Parses the first class declaration found in the source. Semantic analysis
+    /// (implicit interface detection) is only run when the caller's layout
+    /// actually uses the ImplementsInterface matcher; otherwise it is skipped so
+    /// a long-lived CLI never pays for it. The check is deliberately limited to
+    /// the current file plus the shared framework references: scanning the whole
+    /// project tree pinned hundreds of MB in a persistent process.
+    /// </summary>
+    public ParsedClass ParseFirstClass(string source, bool analyzeInterfaces = true)
     {
         var tree = CSharpSyntaxTree.ParseText(source);
         var root = tree.GetCompilationUnitRoot();
@@ -22,8 +29,9 @@ public sealed class CSharpDocumentParser
             ?? throw new InvalidOperationException("No class declaration found.");
 
         var assignedFields = DetectConstructorAssignedFields(declaration);
-        var referenceTrees = projectRoot is null ? Array.Empty<Roslyn::SyntaxTree>() : ProjectTrees(projectRoot);
-        var implicitImpls = DetectImplicitInterfaceImplementations(declaration, referenceTrees);
+        var implicitImpls = analyzeInterfaces
+            ? DetectImplicitInterfaceImplementations(declaration)
+            : new HashSet<string>(StringComparer.Ordinal);
         var members = declaration.Members.Select((member, index) => ToMember(member, index, assignedFields, implicitImpls)).ToList();
         return new ParsedClass { Declaration = declaration, Members = members };
     }
@@ -115,11 +123,28 @@ private static string? ResolveFieldTarget(
         => declaration.Members[originalIndex];
 
     /// <summary>
-    /// Cached references from the current shared framework. Loading the runtime
-    /// assemblies once lets the semantic model resolve interfaces such as
-    /// System.IDisposable when deciding whether a public member is an implicit
-    /// interface implementation.
+    /// Cached references from the current shared framework. Only the platform
+    /// modules that actually define commonly implemented interfaces are loaded
+    /// (the full runtime directory holds hundreds of DLLs and pinned hundreds of
+    /// MB in the long-lived CLI). The semantic model can still resolve BCL
+    /// interfaces such as System.IDisposable.
     /// </summary>
+    private static readonly HashSet<string> PlatformModuleNames = new(StringComparer.OrdinalIgnoreCase)
+    {
+        // Standard .NET distribution: the core runtime module that carries Object,
+        // IDisposable, IComparable, Iterator and the rest of the BCL interfaces.
+        "System.Private.CoreLib.dll",
+        // Modular/CSP-style runtimes expose the same interfaces via flat modules.
+        "System.dll", "IO.dll", "Base.dll", "Collections.dll", "Concurrency.dll",
+        "ModuleSystem.dll", "Reflection.dll", "Serialization.dll", "Networking.dll",
+        "Time.dll", "Misc.dll", "Utilities.dll", "Process.dll", "Telemetry.dll",
+        // Standard-distribution facades that may still declare implementable types.
+        "System.Collections.dll", "System.Collections.Concurrent.dll",
+        "System.Collections.Immutable.dll", "System.IO.dll", "System.Linq.dll",
+        "System.Net.dll", "System.Runtime.dll", "System.Security.dll",
+        "System.Threading.dll", "System.ObjectModel.dll"
+    };
+
     private static readonly Lazy<IReadOnlyList<Roslyn::MetadataReference>> SharedReferences = new(() =>
     {
         var refs = new List<Roslyn::MetadataReference>();
@@ -128,6 +153,7 @@ private static string? ResolveFieldTarget(
 
         foreach (var dll in Directory.EnumerateFiles(runtimeDir, "*.dll"))
         {
+            if (!PlatformModuleNames.Contains(Path.GetFileName(dll))) continue;
             try { refs.Add(Roslyn::MetadataReference.CreateFromFile(dll)); }
             catch { /* skip unreadable assemblies */ }
         }
@@ -135,64 +161,23 @@ private static string? ResolveFieldTarget(
     });
 
     /// <summary>
-    /// Cache of parsed source trees per project root, so repeated rearranges of
-    /// files in the same project do not re-parse the whole tree each time. The
-    /// CLI stays alive for the lifetime of the editor session, so this is a real
-    /// win; staleness only matters if sources change mid-session.
-    /// </summary>
-    private static readonly ConcurrentDictionary<string, IReadOnlyList<Roslyn::SyntaxTree>> ProjectTreeCache = new(StringComparer.OrdinalIgnoreCase);
-
-    private static IReadOnlyList<Roslyn::SyntaxTree> ProjectTrees(string projectRoot)
-    {
-        var key = Path.GetFullPath(projectRoot);
-        return ProjectTreeCache.GetOrAdd(key, static root =>
-        {
-            var trees = new List<Roslyn::SyntaxTree>();
-            try
-            {
-                foreach (var file in Directory.EnumerateFiles(root, "*.cs", SearchOption.AllDirectories))
-                {
-                    var lower = file.ToLowerInvariant();
-                    if (lower.IndexOf("\\obj\\", StringComparison.Ordinal) >= 0
-                        || lower.IndexOf("\\bin\\", StringComparison.Ordinal) >= 0
-                        || lower.IndexOf("\\node_modules\\", StringComparison.Ordinal) >= 0
-                        || lower.IndexOf("\\.git\\", StringComparison.Ordinal) >= 0)
-                        continue;
-                    try { trees.Add(CSharpSyntaxTree.ParseText(File.ReadAllText(file), path: file)); }
-                    catch { /* skip unreadable files */ }
-                }
-            }
-            catch
-            {
-                // cannot enumerate the project root; fall back to the single file
-            }
-            return trees;
-        });
-    }
-
-    /// <summary>
     /// Returns the names of members that implement an interface the class
-    /// declares (implicitly). Uses a semantic model fed by both the project's
-    /// own source trees and the shared framework assemblies, so interfaces in
-    /// other namespaces/files (e.g. a Homa.Logic.IReply implemented in this
-    /// class) and BCL interfaces (e.g. IDisposable) both resolve.
-    /// Fail-closed: any compilation trouble means we simply flag nothing.
+    /// declares (implicitly). The model is built from the current file plus the
+    /// allowlisted framework references, so same-file interfaces and BCL
+    /// interfaces (e.g. IDisposable) resolve. Interfaces declared in other
+    /// project files no longer resolve: scanning the whole tree pinned hundreds
+    /// of MB in the persistent CLI. Fail-closed: any compilation trouble means
+    /// we simply flag nothing.
     /// </summary>
-    private static HashSet<string> DetectImplicitInterfaceImplementations(
-        ClassDeclarationSyntax declaration,
-        IReadOnlyList<Roslyn::SyntaxTree> referenceTrees)
+    private static HashSet<string> DetectImplicitInterfaceImplementations(ClassDeclarationSyntax declaration)
     {
         var result = new HashSet<string>(StringComparer.Ordinal);
         try
         {
             var tree = declaration.SyntaxTree;
-            var trees = new Roslyn::SyntaxTree[referenceTrees.Count + 1];
-            trees[0] = tree;
-            for (var i = 0; i < referenceTrees.Count; i++) trees[i + 1] = referenceTrees[i];
-
             var compilation = CSharpCompilation.Create(
                 "RiderLayout",
-                trees,
+                [tree],
                 SharedReferences.Value,
                 new CSharpCompilationOptions(Roslyn::OutputKind.DynamicallyLinkedLibrary));
             var model = compilation.GetSemanticModel(tree);

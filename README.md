@@ -69,6 +69,12 @@ Built with:
 See [docs/README.md](docs/README.md) (in the repository) for developer docs, and `docs/ROADMAP.md` for what's next.
 
 ## Release notes
+**v0.7.1** — Drastically reduced CLI memory usage:
+- The CLI no longer parses and caches every `.cs` file in the project to detect implicit interface implementations — the long-lived process previously pinned hundreds of MB of RAM
+- Semantic analysis now runs only when the active layout actually uses the `ImplementsInterface` matcher; every other layout takes a parse-only fast path
+- The framework metadata cache now loads only a small allowlist of platform modules instead of every DLL in the .NET runtime directory
+- `ImplementsInterface` still resolves interfaces declared in the same file and BCL interfaces (e.g. `IDisposable`); interfaces declared in other project files are no longer detected
+
 **v0.7.0** — Regions in Go to Symbol (`Ctrl+Shift+O`) and Outline:
 - New document symbol provider makes every `#region` block in a `.cs` file navigable: press `Ctrl+Shift+O`, type the region name, or use the Outline/breadcrumbs — results are merged with the built-in C# members
 - Nested regions are shown as a tree; the C# extension's own symbols remain untouched
